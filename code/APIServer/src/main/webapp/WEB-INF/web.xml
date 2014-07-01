@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  e-Science Central
+  Copyright (C) 2008-2013 School of Computing Science, Newcastle University
+
+  This program is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public License
+  version 2 as published by the Free Software Foundation at:
+  http://www.gnu.org/licenses/gpl-2.0.html
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with this program; if not, write to the Free Software
+  Foundation, Inc., 51 Franklin Street, 5th Floor, Boston, MA 02110-1301, USA.
+-->
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+    <context-param>
+        <description>Is quota turned on</description>
+        <param-name>quotaEnabled</param-name>
+        <param-value>false</param-value>
+    </context-param>
+    <context-param>
+        <param-name>resteasy.resources</param-name>
+        <param-value>com.connexience.server.api.external.jaxrs.v1.RestStorageService,
+                     com.connexience.server.api.external.jaxrs.v1.RestWorkflowService,
+                     com.connexience.server.api.external.jaxrs.v1.RestDatasetService</param-value>
+    </context-param>
+    <context-param>
+        <param-name>resteasy.role.based.security</param-name>
+        <param-value>true</param-value>
+    </context-param>
+    <!-- Data servlet for new rest service -->
+    <servlet-mapping>
+        <servlet-name>DataServlet</servlet-name>
+        <url-pattern>/public/rest/v1/storage/data/*</url-pattern>
+    </servlet-mapping>
+    <!-- Data servlet for SOAP service -->
+    <servlet-mapping>
+        <servlet-name>DataServlet</servlet-name>
+        <url-pattern>/public/ws/storage/v1/data/*</url-pattern>
+    </servlet-mapping>
+    <session-config>
+        <session-timeout>30</session-timeout>
+    </session-config>
+    <welcome-file-list>
+        <welcome-file>index.jsp</welcome-file>
+    </welcome-file-list>
+    <error-page>
+        <error-code>404</error-code>
+        <location>/error.jsp</location>
+    </error-page>
+    <!-- RESTEasy bootstrapper -->
+    <listener>
+        <listener-class>org.jboss.resteasy.plugins.server.servlet.ResteasyBootstrap</listener-class>
+    </listener>
+    <filter>
+        <filter-name>CORS</filter-name>
+        <filter-class>com.thetransactioncompany.cors.CORSFilter</filter-class>
+        <init-param>
+            <param-name>cors.supportedMethods</param-name>
+            <param-value>GET, POST, HEAD, PUT, DELETE, OPTIONS</param-value>
+        </init-param>
+        <init-param>
+            <param-name>cors.supportedHeaders</param-name>
+            <param-value>Origin, Accept, Content-Type, X-Requested-With, Cookie,content-type</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>CORS</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <servlet>
+        <servlet-name>resteasy-servlet</servlet-name>
+        <servlet-class>org.jboss.resteasy.plugins.server.servlet.HttpServletDispatcher</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DataServlet</servlet-name>
+        <servlet-class>com.connexience.server.api.rest.DataServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>JSAPI</servlet-name>
+        <servlet-class>org.jboss.resteasy.jsapi.JSAPIServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>resteasy-servlet</servlet-name>
+        <url-pattern>/rest/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>resteasy-servlet</servlet-name>
+        <url-pattern>/public/rest/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>JSAPI</servlet-name>
+        <url-pattern>/rest-js</url-pattern>
+    </servlet-mapping>
+    <!-- STORAGE API SECURITY -->
+    <security-constraint>
+        <display-name>StorageAPIUsers</display-name>
+        <!-- New REST service -->
+        <web-resource-collection>
+            <web-resource-name>StorageInterface</web-resource-name>
+            <description/>
+            <url-pattern>/public/rest/v1/storage/*</url-pattern>
+        </web-resource-collection>
+        <!-- Data source for new REST service -->
+        <web-resource-collection>
+            <web-resource-name>DataSource</web-resource-name>
+            <description/>
+            <url-pattern>/public/rest/v1/storage/data/*</url-pattern>
+        </web-resource-collection>
+        <!-- SOAP Storage security -->
+        <web-resource-collection>
+            <web-resource-name>StorageSOAP</web-resource-name>
+            <description/>
+            <url-pattern>/storagev1</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <description>Standard User authentication</description>
+            <role-name>Users</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <!-- WORKFLOW API SECURITY -->
+    <security-constraint>
+        <display-name>WorkflowAPIUsers</display-name>
+        <!-- New REST service -->
+        <web-resource-collection>
+            <web-resource-name>Worfklow REST</web-resource-name>
+            <description/>
+            <url-pattern>/public/rest/v1/workflow/*</url-pattern>
+        </web-resource-collection>
+        <!-- Workflow SOAP service -->
+        <web-resource-collection>
+            <web-resource-name>WorkflowSOAP</web-resource-name>
+            <description/>
+            <url-pattern>/workflowv1</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <description>Workflow API Users</description>
+            <role-name>Users</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <!-- Dataset security -->
+    <security-constraint>
+        <display-name>Dataset API Users</display-name>
+        <!-- new Public REST dataset interface -->
+        <web-resource-collection>
+            <web-resource-name>DatasetAPI</web-resource-name>
+            <description>New style REST datasets</description>
+            <url-pattern>/public/rest/v1/dataset/*</url-pattern>
+        </web-resource-collection>
+        <!-- SOAP Dataset interface -->
+        <web-resource-collection>
+            <web-resource-name>DatasetAPI</web-resource-name>
+            <description>New style SOAP datasets</description>
+            <url-pattern>/datasetv1</url-pattern>
+        </web-resource-collection>
+        <auth-constraint>
+            <description>Standard User authentication</description>
+            <role-name>Users</role-name>
+        </auth-constraint>
+    </security-constraint>
+    <login-config>
+        <auth-method>BASIC</auth-method>
+        <realm-name>connexience</realm-name>
+    </login-config>
+    <security-role>
+        <description>Any logged on user</description>
+        <role-name>Users</role-name>
+    </security-role>
+</web-app>
