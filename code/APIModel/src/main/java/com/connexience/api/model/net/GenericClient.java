@@ -195,7 +195,7 @@ public class GenericClient {
         } else {
             uri = new URI("http", hostname + ":" + port, urlBase + url, null, null);
         }
-
+     //   System.out.println(uri);
         URL urlDef = uri.toURL();
         URLConnection connection = urlDef.openConnection();   
         String authData = username + ":" + password;

@@ -50,6 +50,7 @@ public class EscDocument extends EscObject implements JsonSerializable {
     }
 
     public long getCurrentVersionSize() {
+    	
         return currentVersionSize;
     }
 
@@ -58,6 +59,7 @@ public class EscDocument extends EscObject implements JsonSerializable {
     }
 
     public String getDownloadPath() {
+    	
         return downloadPath;
     }
 

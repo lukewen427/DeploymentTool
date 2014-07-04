@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PipelineDocument>
+    <Data>
+        <Parameter AutoAdd="false" Name="Properties" Type="XmlDataStore">
+            <Parameter AutoAdd="false" Name="SystemProperties" Type="XmlDataStore">
+                <Parameter AutoAdd="true" Name="Workflow" Type="XmlDataStore">
+                    <Parameter
+                        Description="Maximum number of workflow jobs this engine will take from the queue at any time"
+                        Name="MaxWorkflowCount" Type="Integer" Value="2"/>
+                    <Parameter
+                        Description="Directory to use as workflow scratch space"
+                        Name="InvocationStorageDir" Type="String" Value="/mnt/workflow/invocations"/>
+                    <Parameter
+                        Description="Maximum Java PermGen size in megabytes"
+                        Name="DefaultMaxPermSize" Type="Integer" Value="256"/>
+                    <Parameter
+                        Description="Maximum number of concurrent workflow services that are allowed to execute at any time"
+                        Name="MaxConcurrentServiceInvocations"
+                        Type="Integer" Value="1"/>
+                    <Parameter
+                        Description="Maximum JavaVM size in megabytes"
+                        Name="DefaultVMSize" Type="Integer" Value="512"/>
+                </Parameter>
+                <Parameter AutoAdd="true" Name="Engine" Type="XmlDataStore">
+                    <Parameter
+                        Description="Base URL on the server providing API service"
+                        Name="APIContext" Type="String" Value="/workflow"/>
+                    <Parameter
+                        Description="IP address to use when setting the host ID in workflow invocations"
+                        Name="OverriddenIP" Type="String" Value="127.0.0.1"/>
+                    <Parameter
+                        Description="The port on which the 'single VM process' waits for a debugging client to connect"
+                        Name="SingleVMDebuggingListenPort"
+                        Type="Integer" Value="6006"/>
+                    <Parameter
+                        Description="Set to allow the server to attempt RMI communications"
+                        Name="AllowRMI" Type="Boolean" Value="true"/>
+                    <Parameter
+                        Description="Are workflow blocks allowed to operate in Java debugging mode"
+                        Name="AllowDebugger" Type="Boolean" Value="true"/>
+                    <Parameter
+                        Description="Port of the RMI registry on the server"
+                        Name="RMIRegistryPort" Type="Integer" Value="2199"/>
+                    <Parameter
+                        Description="Should the API clients use JMS to send non-blocking updates where possible"
+                        Name="UseJMSToSendUpdates" Type="Boolean" Value="true"/>
+                    <Parameter
+                        Description="Should the engine enable the various information caches to reduce server calls"
+                        Name="EnableInformationCache" Type="Boolean" Value="true"/>
+                    <Parameter
+                        Description="Directory to store temporary files; if unset a system dependent default temporary-file directory will be used"
+                        Name="TemporaryDir" Type="String" Value="/mnt/workflow/temp"/>
+                    <Parameter
+                        Description="Name of the server providing API service"
+                        Name="APIHost" Type="String" Value="localhost"/>
+                    <Parameter
+                        Description="Should the engine run all of a workflows services in a single VM"
+                        Name="SingleVMPerWorkflow" Type="Boolean" Value="true"/>
+                    <Parameter
+                        Description="Should the engine attempt to gather system data"
+                        Name="GatherSystemData" Type="Boolean" Value="true"/>
+                    <Parameter
+                        Description="Length of time (in seconds) to wait for the single service VM to start"
+                        Name="SingleVMCreationTimeout" Type="Integer" Value="60"/>
+                    <Parameter
+                        Description="Port on the server providing API service"
+                        Name="APIPort" Type="Integer" Value="8080"/>
+                    <Parameter
+                        Description="Override the detected local IP address when setting the host ID in workflow invocations"
+                        Name="OverrideDetectedLocalIP" Type="Boolean" Value="false"/>
+                    <Parameter
+                        Description="Should the 'single VM' process suspend waiting for a debugger to connect"
+                        Name="SingleVMDebuggingSuspended" Type="Boolean" Value="false"/>
+                    <Parameter
+                        Description="Directory to store downloaded services in"
+                        Name="ServiceLibraryDir" Type="String" Value="/mnt/workflow/library"/>
+                </Parameter>
+                <Parameter AutoAdd="true" Name="Performance" Type="XmlDataStore">
+                    <Parameter Name="JMSUser" Type="String" Value="connexience"/>
+                    <Parameter Name="JMSServerPort" Type="Integer" Value="5445"/>
+                    <Parameter Name="EngineDataSampleInterval"
+                        Type="Integer" Value="500"/>
+                    <Parameter Name="Enabled" Type="Boolean" Value="true"/>
+                    <Parameter Name="EngineDataSendInterval"
+                        Type="Integer" Value="5000"/>
+                    <Parameter Name="EngineDataFilterConstant"
+                        Type="Double" Value="0.8"/>
+                    <Parameter Name="JMSPassword" Type="String" Value="1234"/>
+                    <Parameter Name="JMSServerHost" Type="String" Value="localhost"/>
+                    <Parameter Name="SendEngineDataWhenIdle"
+                        Type="Boolean" Value="true"/>
+                </Parameter>
+                <Parameter AutoAdd="true" Name="JMS" Type="XmlDataStore">
+                    <Parameter Name="JMSControlMessageTopic"
+                        Type="String" Value="WorkflowControl"/>
+                    <Parameter Description="JMS communication port"
+                        Name="JMSPort" Type="Integer" Value="5445"/>
+                    <Parameter Description="JMS user" Name="JMSUser"
+                        Type="String" Value="connexience"/>
+                    <Parameter Description="JMS password"
+                        Name="JMSPassword" Type="String" Value="1234"/>
+                    <Parameter
+                        Description="Name of the JMS queue that this engine listens to"
+                        Name="JMSQueue" Type="String" Value="Workflow"/>
+                    <Parameter Description="JMS server address"
+                        Name="JMSServer" Type="String" Value="localhost"/>
+                    <Parameter
+                        Description="Queue used to send back status messages"
+                        Name="JMSManagerMessageQueue" Type="String" Value="WorkflowManagerQueue"/>
+                    <Parameter Name="JMSConsumerWindowSize"
+                        Type="Integer" Value="0"/>
+                </Parameter>
+                <Parameter AutoAdd="true" Name="Provenance" Type="XmlDataStore">
+                    <Parameter Description="Host of the JMS Server"
+                        Name="JMSServerHost" Type="String" Value="localhost"/>
+                    <Parameter
+                        Description="Should JMS Messages be sent to the provenance server"
+                        Name="Enabled" Type="Boolean" Value="true"/>
+                    <Parameter Description="Password for the JMS Queue"
+                        Name="JMSPassword" Type="String" Value="1234"/>
+                    <Parameter Description="Username of the JMS Queue"
+                        Name="JMSUser" Type="String" Value="connexience"/>
+                    <Parameter Description="Port of the JMS Server"
+                        Name="JMSServerPort" Type="Integer" Value="5445"/>
+                </Parameter>
+                <Parameter AutoAdd="true" Name="Security" Type="XmlDataStore">
+                    <Parameter
+                        Description="Prefix to use when creating workflow user names"
+                        Name="InvocationUserIDStart" Type="Integer" Value="1000"/>
+                    <Parameter
+                        Description="Unix group GID for invocation user primary group"
+                        Name="InvocationGroupID" Type="Integer" Value="400"/>
+                    <Parameter
+                        Description="Group that the workflow engine uses to access invocation directories"
+                        Name="EngineGroup" Type="String" Value="staff"/>
+                    <Parameter
+                        Description="Group name for invocation users"
+                        Name="InvocationGroup" Type="String" Value="wfusers"/>
+                    <Parameter
+                        Description="Prefix to use when creating workflow user names"
+                        Name="InvocationUserPrefix" Type="String" Value="wfuser"/>
+                    <Parameter
+                        Description="Should workflow invocations be isolated from each other"
+                        Name="EnableWorkflowIsolation" Type="Boolean" Value="false"/>
+                    <Parameter
+                        Description="Should all of the invocation users processes be killed when an invocation finishes"
+                        Name="KillInvocationUserProcesses"
+                        Type="Boolean" Value="true"/>
+                </Parameter>
+            </Parameter>
+            <Parameter AutoAdd="false" Name="EditableProperties" Type="XmlDataStore"/>
+        </Parameter>
+    </Data>
+</PipelineDocument>

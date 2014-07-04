@@ -277,7 +277,7 @@ public class StorageClient extends GenericClient implements StorageInterface
     {
         String url = String.format("/documents/%s/%s/blocklist", documentId, versionId);
         JSONArray array = retrieveJsonArray(url);
-
+        System.out.println(array);
         ArrayList<Integer> output = new ArrayList<>();
         for (int i = 0; i < array.length(); i++) {
             output.add(array.getInt(i));

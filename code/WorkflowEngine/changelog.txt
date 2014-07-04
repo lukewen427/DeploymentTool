@@ -1,0 +1,19 @@
+=== 2012/12/13 ===
+- partial merge with eSC-2-azure branch including fixes to R blocks and CSV I/O
+
+=== 2012/12/03 ===
+- added more logging in copy HttpUploader.copyStreamToTempFile() to trace 
+  problem with 'not enough disk space' in Azure
+ 
+
+=== 2012/11/30 ===
+- fixed NullPointerException in WorkflowInvocation when the engine takes up 
+  some stored invocations after restart
+- fixed NullPointerException in CloudWorkflowEngine on shutdown before the 
+  engine is properly initialized
+- cleaner logging of the error when block does not produce expected output 
+
+
+=== 2012/11/29 ===
+- less detailed logging when a block does not produce output data; more details
+  logged in the debug level
