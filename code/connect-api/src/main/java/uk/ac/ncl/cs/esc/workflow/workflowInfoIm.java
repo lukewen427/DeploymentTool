@@ -3,11 +3,14 @@ package uk.ac.ncl.cs.esc.workflow;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.pipeline.core.drawing.BlockModel;
 import org.pipeline.core.drawing.model.DefaultDrawingModel;
+import org.pipeline.core.xmlstorage.XmlDataObject;
 import org.pipeline.core.xmlstorage.XmlDataStore;
 import org.pipeline.core.xmlstorage.io.XmlDataStoreStreamReader;
 
@@ -40,6 +43,7 @@ public class workflowInfoIm implements WorkflowInfo {
 		 ByteArrayInputStream inStream=new ByteArrayInputStream(buffer.toByteArray());
 		 XmlDataStoreStreamReader reader =new XmlDataStoreStreamReader(inStream);
 		 XmlDataStore wfData =reader.read();
+		//wfData.getNames();
 		 DefaultDrawingModel drawing =new DefaultDrawingModel();
 		 drawing.recreateObject(wfData);
 		 JSONDrawingExporter exporter = new JSONDrawingExporter(drawing);
@@ -53,10 +57,14 @@ public class workflowInfoIm implements WorkflowInfo {
 		HashMap<String,String> Blocklist=new HashMap<String,String>();
 		JSONObject dataObject= getWorkflowAsJsonObject( workflowId);
 		JSONObject blocks = dataObject.getJSONObject("blocks");
+		
 		JSONArray blockArray = blocks.getJSONArray("blockArray");
+		
         int blockCount = blocks.getInt("blockCount");
+        System.out.println(blockCount);
         for (int i = 0; i < blockCount; i++)
         {
+        	
         	Blocklist.put((String) blockArray.getJSONObject(i).get("guid"),(String) blockArray.getJSONObject(i).get("label") );
         	
         }
@@ -90,7 +98,7 @@ public class workflowInfoIm implements WorkflowInfo {
 			 }
 			  temp.clear();
 			}
-			System.out.println(connectionmap);
+	//		System.out.println(connectionmap);
 			return connectionmap;
 	}
 
@@ -304,9 +312,9 @@ public class workflowInfoIm implements WorkflowInfo {
 		cloudConnection test=new cloudConnection();
 		connection con=test.creatCon("cloud0");
 		WorkflowInfo test2= new workflowInfoIm(con);
-	//	test2.getWorkflowAsJsonObject("877");
+		test2.getWorkflowAsJsonObject("877");
 	//	test2.Blocklist("877");
-		test2.getSource("877");
+	//	test2.getSource("877");
 	}
 
 }

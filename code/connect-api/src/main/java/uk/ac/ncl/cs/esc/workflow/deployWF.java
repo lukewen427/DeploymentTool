@@ -16,6 +16,6 @@ import com.connexience.server.workflow.service.DataProcessorServiceDefinition;
 public interface deployWF {
 	
 public HashMap<String,String> fileUpload(HashMap<String, ByteArrayOutputStream> theresults,StorageClient Sclient)throws Exception;
-public DataProcessorBlock createBlock(API api,String serivceId )throws Exception ;
-public DocumentRecord createWorkflow(String name,API api,DefaultDrawingModel drawing) throws Exception;
+public DataProcessorBlock createBlock(String serivceId )throws Exception ;
+public DocumentRecord createWorkflow(String name,DefaultDrawingModel drawing) throws Exception;
 }

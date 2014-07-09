@@ -13,6 +13,7 @@ import org.pipeline.core.drawing.model.DefaultDrawingModel;
 
 import com.connexience.api.StorageClient;
 import com.connexience.api.WorkflowClient;
+import com.connexience.server.workflow.api.API;
 import com.connexience.server.workflow.blocks.processor.DataProcessorBlock;
 import com.connexience.server.workflow.json.JSONDrawingExporter;
 
@@ -29,10 +30,10 @@ public class eSCWorkflow {
 
 		cloudConnection coCloud=new cloudConnection();
 		connection con=coCloud.creatCon(cloudName);
-		StorageClient Sclient =con.getStorageAPI();
-		WorkflowClient wfClient=con.getWorkflowAPI();
-		HashMap<String,String> resultInfo=null;
-		deployWF wf=new deployWFIm();
+		API api=con.getAPI();
+		deployWF wf=new deployWFIm(api);
+		 StorageClient Sclient =con.getStorageAPI();
+		 HashMap<String,String> resultInfo=null;
 		if(!theresults.isEmpty()){
 			resultInfo=wf.fileUpload(theresults, Sclient);
 		}
@@ -48,14 +49,14 @@ public class eSCWorkflow {
 				String serviceName=null;
 				
 				
-				IDynamicWorkflowService service = parser.getService("blocks-core-io-csvimport");
-				serviceBlock = parser.createBlock(service);
+			//	IDynamicWorkflowService service = parser.getService("blocks-core-io-csvimport");
+				serviceBlock = wf.createBlock("blocks-core-io-csvimport");
 				createblock(b,serviceBlock,documentId,serviceId,api,drawing,serviceName);
 				b++;
 				
 			}else{
-				IDynamicWorkflowService service1 = parser.getService(serviceId);
-				serviceBlock = parser.createBlock(service1);
+				
+				serviceBlock = wf.createBlock(serviceId);
 				createblock(b,serviceBlock,null,serviceId,api,drawing,null);
 				b++;
 				
@@ -65,8 +66,8 @@ public class eSCWorkflow {
 								String findId=input.get(0)+","+blockId;
 								String documentId=resultInfo.get(findId);
 								String theserviceId="blocks-core-io-csvimport";
-								IDynamicWorkflowService service = parser.getService("blocks-core-io-csvimport");
-								DataProcessorBlock Block = parser.createBlock(service);
+						//		IDynamicWorkflowService service = parser.getService("blocks-core-io-csvimport");
+								DataProcessorBlock Block = wf.createBlock(theserviceId);
 								createblock(b,Block,documentId,theserviceId,api,drawing,partitionName);
 								b++;
 							     String inputportName=input.get(5);
@@ -76,7 +77,7 @@ public class eSCWorkflow {
 			}
 			
 			offspringNodes( serviceBlock,startBlock,blockset,connections,partition,
-					drawing,b,parser,api,new ArrayList<String>());
+					drawing,b,wf,api,new ArrayList<String>());
 		}
 		
 		HashMap<String, ByteArrayOutputStream> result=new HashMap<String, ByteArrayOutputStream>();
@@ -116,7 +117,7 @@ public class eSCWorkflow {
 	
 	/* this method is used the create the offspring nodes the start nodes*/
 	private void offspringNodes(DataProcessorBlock serviceBlock,Block startBlock,BlockSet blockset,ArrayList<ArrayList<String>> connections,
-			ArrayList<Object>partition,DefaultDrawingModel drawing,int b,getConnection parser,API api,ArrayList<String> visited) throws Exception{
+			ArrayList<Object>partition,DefaultDrawingModel drawing,int b,deployWF wf,API api,ArrayList<String> visited) throws Exception{
 		
 		String blockId=startBlock.getBlockId();
 		visited.add( blockId);
@@ -132,8 +133,8 @@ public class eSCWorkflow {
 					String serviceName=null;
 					String documentId=null;
 					String offspringSeviceId=destinationBlock.getserviceId();
-					IDynamicWorkflowService service = parser.getService(offspringSeviceId);
-					DataProcessorBlock Block = parser.createBlock(service);
+					//IDynamicWorkflowService service = parser.getService(offspringSeviceId);
+					DataProcessorBlock Block = wf.createBlock(offspringSeviceId);
 					createblock(b,Block,documentId,offspringSeviceId,api,drawing,serviceName);
 					b++;
 					for(int fx=0;fx<connections.size();fx++){
@@ -147,13 +148,13 @@ public class eSCWorkflow {
 						}
 					}
 					drawing.connectPorts(serviceBlock.getOutput(outputPort),Block.getInput(inputPort));
-					offspringNodes(Block,destinationBlock,blockset,connections,partition,drawing,b, parser,api,visited);
+					offspringNodes(Block,destinationBlock,blockset,connections,partition,drawing,b, wf,api,visited);
 				}
 				if(!partition.contains(destinationBlock)){
 					String theserviceName=blockId+","+destination;
 					String theserviceId="blocks-core-io-csvexport";
-					IDynamicWorkflowService service3=parser.getService(theserviceId);
-					DataProcessorBlock exportBlock = parser.createBlock(service3);
+				//	IDynamicWorkflowService service3=parser.getService(theserviceId);
+					DataProcessorBlock exportBlock = wf.createBlock(theserviceId);
 					createblock(b,exportBlock,null,theserviceId,api,drawing,theserviceName);
 					b++;
 					for(int fx=0;fx<connections.size();fx++){

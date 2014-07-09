@@ -23,6 +23,7 @@ import com.connexience.server.workflow.service.DataProcessorServiceDefinition;
 import java.util.List;
 import java.io.*;
 
+import org.pipeline.core.drawing.BlockModel;
 import org.pipeline.core.drawing.DrawingException;
 import org.pipeline.core.drawing.model.DefaultDrawingModel;
 import org.pipeline.core.xmlstorage.XmlDataStore;
@@ -30,7 +31,11 @@ import org.pipeline.core.xmlstorage.io.XmlDataStoreStreamWriter;
 
 import uk.ac.ncl.cs.esc.connection.connection;
 public class deployWFIm implements deployWF {
-
+	API api;
+	public deployWFIm(API api){
+		this.api=api;
+	}
+	// EscDocument is the stored data
 	@Override
 	public HashMap<String, String> fileUpload(
 			HashMap<String, ByteArrayOutputStream> theresults,
@@ -63,8 +68,10 @@ public class deployWFIm implements deployWF {
 	        def.loadXmlStream(xmlStream);
 	        return def;
 	    }
+	  
+
 	@Override
-	public DataProcessorBlock createBlock(API api, String serviceId) throws Exception {
+	public DataProcessorBlock createBlock(String serviceId) throws Exception {
 		// TODO Auto-generated method stub
 			DocumentRecord serviceDoc=api.getDocument(serviceId);
 	        List<DocumentVersion>serviceVersions=api.getDocumentVersions(serviceDoc);
@@ -88,7 +95,7 @@ public class deployWFIm implements deployWF {
 	        //    String serviceXml = api.getServiceXml(serviceDoc);
 	       //     DataProcessorServiceDefinition def = new DataProcessorServiceDefinition();
 	      //      def.loadXmlString(serviceXml);
-
+	            
 	            block.setServiceDefinition(def);
 	            block.initialiseForService();
 	            block.setServiceId(serviceDoc.getId());
@@ -101,9 +108,9 @@ public class deployWFIm implements deployWF {
 			throw new Exception("cannot find latest version of block");
 		}
 	}
-
+	// DocumentRecod is the workflow document
 	@Override
-	public DocumentRecord createWorkflow(String name,API api,DefaultDrawingModel drawing) throws Exception {
+	public DocumentRecord createWorkflow(String name,DefaultDrawingModel drawing) throws Exception {
 		// TODO Auto-generated method stub
 		Ticket t = api.getTicket();
 		 User u = api.getUser(t.getUserId());

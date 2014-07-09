@@ -66,8 +66,10 @@ public class ApiProvider {
     private RMIWorkflowManager lookupRMIWorkflowManger(){
         if(useRmi){
             try {
+            	 
                 Registry registry = LocateRegistry.getRegistry(hostName, rmiRegistryPort);
                 RMIWorkflowManager mgr = (RMIWorkflowManager)registry.lookup("RMIWorkflowManager");
+               
                 rmiError = false;
                 return mgr;
             } catch (Exception e){
@@ -141,9 +143,12 @@ public class ApiProvider {
     
     private RMIClient createRemoteAPI() throws Exception {
         if(isRmiUsable()){
+        	
             RMIWorkflowManager mgr = lookupRMIWorkflowManger();
+           
             if(mgr!=null){
                 return new RMIClient(this, null, mgr.createService());
+                
             } else {
                 throw new Exception("No Remote Workflow manager available");
             }
@@ -231,6 +236,7 @@ public class ApiProvider {
     
     public API createApi() {
         API api;
+        
         if(isRmiUsable()){
             try {
                 api = createRemoteAPI();
@@ -241,12 +247,14 @@ public class ApiProvider {
             }
             
         } else {
+           
             api = new RESTClient(this);
         }
+
         api.setServerContext(serverContext);
         api.setHttpPort(httpPort);
         api.setHostName(hostName);
-        checkDataStore(api);
+      //  checkDataStore(api);
 
         return api;
     }
