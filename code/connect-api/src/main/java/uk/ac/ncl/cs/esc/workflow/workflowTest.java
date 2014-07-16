@@ -23,24 +23,6 @@ public class workflowTest {
 		 HashMap<String, String>blocks=workflow.Blocklist("877");
 		 Iterator<String> blockKey=blocks.keySet().iterator();
 	
-	     while(blockKey.hasNext()){
-			 String blockid=blockKey.next();
-			 String serviceId= workflow.getBlockServiceId(blockid, "877");
-			 DataProcessorServiceDefinition def = api.getService(serviceId);
-			 XmlDataStore wfData=def.getServiceProperties();
-			 DefaultDrawingModel drawing =new DefaultDrawingModel();
-			 drawing.recreateObject(wfData);
-			 JSONDrawingExporter exporter = new JSONDrawingExporter(drawing);
-			 System.out.println(exporter.saveToJson());
-		
-		 }
-	//	System.out.println(workflow.Workflowlist());
-	//	test2.getWorkflowAsJsonObject("877");
-	//	test2.Blocklist("877");
-	//	test2.getSource("877");
-		
-		
-	//	API api= con.getAPI();
-	//	deployWF wf=new deployWFIm(api);
+	
 	}
 }

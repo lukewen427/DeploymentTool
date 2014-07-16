@@ -11,11 +11,18 @@ import com.connexience.api.StorageClient;
 import com.connexience.api.WorkflowClient;
 import com.connexience.api.model.EscDocument;
 import com.connexience.api.model.EscDocumentVersion;
+import com.connexience.api.model.EscFolder;
+import com.connexience.api.model.EscWorkflowInvocation;
+import com.connexience.api.model.EscWorkflowParameterList;
+import com.connexience.server.model.ServerObject;
 import com.connexience.server.model.document.DocumentRecord;
 import com.connexience.server.model.document.DocumentVersion;
 import com.connexience.server.model.folder.Folder;
 import com.connexience.server.model.security.Ticket;
 import com.connexience.server.model.security.User;
+import com.connexience.server.model.workflow.WorkflowDocument;
+import com.connexience.server.model.workflow.WorkflowInvocationFolder;
+import com.connexience.server.model.workflow.WorkflowParameterList;
 import com.connexience.server.workflow.api.API;
 import com.connexience.server.workflow.blocks.processor.DataProcessorBlock;
 import com.connexience.server.workflow.service.DataProcessorServiceDefinition;
@@ -110,17 +117,62 @@ public class deployWFIm implements deployWF {
 	}
 	// DocumentRecod is the workflow document
 	@Override
-	public DocumentRecord createWorkflow(String name,DefaultDrawingModel drawing) throws Exception {
+	public  WorkflowDocument createWorkflow(String name,DefaultDrawingModel drawing,String wfFolderId) throws Exception {
 		// TODO Auto-generated method stub
-		Ticket t = api.getTicket();
-		 User u = api.getUser(t.getUserId());
-		 DocumentRecord workflow =api.getOrCreateDocumentRecord(u.getHomeFolderId(), name);
-		 XmlDataStore wfData = drawing.storeObject();
+	   
+	
+		
+//		DocumentRecord workflow =api.getOrCreateDocumentRecord(wfFolderId, name);
+	     	Folder f=api.getFolder(wfFolderId);
+	     	
+//	     	workflow =(DocumentRecord) api.saveDocument(f,workflow);
+		    XmlDataStore wfData = drawing.storeObject();
+		    WorkflowDocument  workflow=new WorkflowDocument();
+		    workflow.recreateObject(wfData);
+		    workflow.setName(name);
+		    workflow=(WorkflowDocument)api.saveDocument(f,workflow);
 		    XmlDataStoreStreamWriter writer = new XmlDataStoreStreamWriter(wfData);
 		    ByteArrayOutputStream outStream = new ByteArrayOutputStream();
 		    writer.write(outStream);
 		    ByteArrayInputStream inStream = new ByteArrayInputStream(outStream.toByteArray());
 		    DocumentVersion  versionId =api.upload(workflow, inStream);
-		    return workflow;
+		    return  workflow;
+	}
+	
+	public void executeWF(DefaultDrawingModel drawing,String partitionName,StorageClient Sclient, WorkflowClient wfClient,HashMap<String, ByteArrayOutputStream> result) throws Exception{
+	//	JSONDrawingExporter exporter = new JSONDrawingExporter(drawing); 
+			String wfFolderId=null;
+			EscFolder home=Sclient.homeFolder();
+			EscFolder[] flist=Sclient.listChildFolders(home.getId());
+			for(EscFolder f:flist){
+				if(f.getName().equals("Workflows")){
+					wfFolderId=f.getId();
+					break;
+				}
+			}
+		
+	     WorkflowDocument newDoc = createWorkflow(partitionName, drawing,wfFolderId);
+		 WorkflowParameterList parameters =new WorkflowParameterList();
+		 
+		api.executeWorkflow((WorkflowDocument) newDoc, parameters, (long)-1, null);
+	///	EscWorkflowParameterList p = new EscWorkflowParameterList();
+		
+	/*	EscWorkflowInvocation invocation=wfClient.executeWorkflow("937");
+		while(invocation.getStatus().equals("Queued")||invocation.getStatus().equals("Running")||
+				invocation.getStatus().equals("Debugging")){
+			Thread.sleep(5000);
+			invocation=wfClient.getInvocation(invocation.getId());
+		}
+		
+		  WorkflowInvocationFolder inv = api.getWorkflowInvocation(invocation.getId());
+		  EscDocument[] produces=Sclient.folderDocuments(inv.getId());
+		 for(EscDocument doc:produces){
+			 String name=doc.getName();
+			 String[] thename=name.split("\\.");
+			 ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+			 Sclient.download(doc, outStream);
+			 outStream.flush();
+			 result.put(thename[0], outStream);
+		 }*/
 	}
 }

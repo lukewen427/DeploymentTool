@@ -61,7 +61,6 @@ public class workflowInfoIm implements WorkflowInfo {
 		JSONArray blockArray = blocks.getJSONArray("blockArray");
 		
         int blockCount = blocks.getInt("blockCount");
-        System.out.println(blockCount);
         for (int i = 0; i < blockCount; i++)
         {
         	

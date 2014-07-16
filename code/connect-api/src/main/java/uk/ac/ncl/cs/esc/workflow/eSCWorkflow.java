@@ -13,6 +13,10 @@ import org.pipeline.core.drawing.model.DefaultDrawingModel;
 
 import com.connexience.api.StorageClient;
 import com.connexience.api.WorkflowClient;
+import com.connexience.api.model.EscDocument;
+import com.connexience.server.model.document.DocumentRecord;
+import com.connexience.server.model.workflow.WorkflowParameter;
+import com.connexience.server.model.workflow.WorkflowParameterList;
 import com.connexience.server.workflow.api.API;
 import com.connexience.server.workflow.blocks.processor.DataProcessorBlock;
 import com.connexience.server.workflow.json.JSONDrawingExporter;
@@ -33,6 +37,7 @@ public class eSCWorkflow {
 		API api=con.getAPI();
 		deployWF wf=new deployWFIm(api);
 		 StorageClient Sclient =con.getStorageAPI();
+		 WorkflowClient wfClient=con.getWorkflowAPI();
 		 HashMap<String,String> resultInfo=null;
 		if(!theresults.isEmpty()){
 			resultInfo=wf.fileUpload(theresults, Sclient);
@@ -81,39 +86,10 @@ public class eSCWorkflow {
 		}
 		
 		HashMap<String, ByteArrayOutputStream> result=new HashMap<String, ByteArrayOutputStream>();
-		getResult(drawing,partitionName,parser,api,result);
+		wf.executeWF(drawing, partitionName, Sclient, wfClient, result);
+	//	getResult(drawing,partitionName,wf,api,result);
         return result;  
 	}
-	
-	/* create the workflow and execute the workflow*/
-	private void getResult(DefaultDrawingModel drawing,String partitionName,getConnection parser,API api,HashMap<String, ByteArrayOutputStream> result) throws Exception{
-		
-		JSONDrawingExporter exporter = new JSONDrawingExporter(drawing); 
-		IWorkflow wf = parser.createWorkflow(partitionName, drawing);
-		IWorkflowParameterList params = (InkspotWorkflowParameterList)api.createObject(IWorkflowParameterList.XML_NAME);
-		IWorkflowInvocation invocation = api.executeWorkflow(wf, params);
-		 while(invocation.getStatus().equals(IWorkflowInvocation.WORKFLOW_RUNNING) || invocation.getStatus().equals(IWorkflowInvocation.WORKFLOW_WAITING)){
-	    	 try {
-	    		 Thread.sleep(1000);
-	    	 } catch (Exception e){}
-	    	 System.out.println("Checking status");
-	    	 invocation =api.getWorkflowInvocation(invocation.getInvocationId());
-	     }
-		  List<IObject> results = api.getFolderContents(invocation);
-	//	  HashMap<String,ByteArrayOutputStream> result=new HashMap<String,ByteArrayOutputStream>();
-		  for (IObject r : results) {
-			  if (r instanceof IDocument) {
-				  IDocument d = (IDocument) r;
-				  String getName= d.getName();
-				  String[] thename=getName.split("\\.");
-				  ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-				  api.download(d, outStream);
-				  outStream.flush();
-				  result.put(thename[0], outStream);
-			  }
-		  }
-		  
-	} 
 	
 	/* this method is used the create the offspring nodes the start nodes*/
 	private void offspringNodes(DataProcessorBlock serviceBlock,Block startBlock,BlockSet blockset,ArrayList<ArrayList<String>> connections,
@@ -155,7 +131,7 @@ public class eSCWorkflow {
 					String theserviceId="blocks-core-io-csvexport";
 				//	IDynamicWorkflowService service3=parser.getService(theserviceId);
 					DataProcessorBlock exportBlock = wf.createBlock(theserviceId);
-					createblock(b,exportBlock,null,theserviceId,api,drawing,theserviceName);
+					createblock(b,exportBlock,null,theserviceId, api,drawing,theserviceName);
 					b++;
 					for(int fx=0;fx<connections.size();fx++){
 						ArrayList<String> connect=connections.get(fx);
@@ -189,10 +165,10 @@ public class eSCWorkflow {
 			if(documentId==null){
 				documentId="ff8080813a022d6e013a0268e5310159";
 			}
-			
-			 IDocument doc = api.getDocument(documentId);
-			 DocumentRecordWrapper wrapper = new DocumentRecordWrapper(doc);
-			 Block.getEditableProperties().add("Source", wrapper);
+			 DocumentRecord doc=api.getDocument(documentId);
+			 DocumentRecord wrapper = new DocumentRecord();
+			 wrapper.populateCopy(doc);
+			 Block.getEditableProperties().add("Source", doc);
 		}
 		
 		if(serviceId.equals("blocks-core-io-csvexport")){
