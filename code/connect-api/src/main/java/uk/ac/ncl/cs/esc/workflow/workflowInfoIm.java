@@ -307,6 +307,22 @@ public class workflowInfoIm implements WorkflowInfo {
 	
 	}
 	
+	public XmlDataStore getWFdata(String workflowId) throws Exception{
+		 StorageClient client =con.getStorageAPI();
+		 EscDocument document=client.getDocument(workflowId);
+	
+		 ByteArrayOutputStream buffer=new ByteArrayOutputStream();
+		 client.download(document, buffer);
+
+		 buffer.flush();
+		 buffer.close();
+		 ByteArrayInputStream inStream=new ByteArrayInputStream(buffer.toByteArray());
+		 XmlDataStoreStreamReader reader =new XmlDataStoreStreamReader(inStream);
+		 XmlDataStore wfData =reader.read();
+		 
+		return wfData;
+	}
+	
 	public static void main(String [] args) throws Exception{
 		cloudConnection test=new cloudConnection();
 		connection con=test.creatCon("cloud0");

@@ -139,7 +139,42 @@ public class deployWFIm implements deployWF {
 		    return  workflow;
 	}
 	
-	public void executeWF(DefaultDrawingModel drawing,String partitionName,StorageClient Sclient, WorkflowClient wfClient,HashMap<String, ByteArrayOutputStream> result) throws Exception{
+	@Override
+	public WorkflowDocument loadWorkflow(String name, String wfFolderId, XmlDataStore wfData) throws Exception {
+		// TODO Auto-generated method stub
+		
+		Folder f=api.getFolder(wfFolderId);
+     	
+//     	workflow =(DocumentRecord) api.saveDocument(f,workflow);
+	 //   XmlDataStore wfData = drawing.storeObject();
+	    WorkflowDocument  workflow=new WorkflowDocument();
+	    workflow.recreateObject(wfData);
+	    workflow.setName(name);
+	    workflow=(WorkflowDocument)api.saveDocument(f,workflow);
+	    XmlDataStoreStreamWriter writer = new XmlDataStoreStreamWriter(wfData);
+	    ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+	    writer.write(outStream);
+	    ByteArrayInputStream inStream = new ByteArrayInputStream(outStream.toByteArray());
+	    DocumentVersion  versionId =api.upload(workflow, inStream);
+	    return  workflow;
+	}
+	
+	public void execute(String partitionName,StorageClient Sclient,XmlDataStore wfdata) throws Exception{
+		String wfFolderId=null;
+		EscFolder home=Sclient.homeFolder();
+		EscFolder[] flist=Sclient.listChildFolders(home.getId());
+		for(EscFolder f:flist){
+			if(f.getName().equals("Workflows")){
+				wfFolderId=f.getId();
+				break;
+			}
+		}
+		  WorkflowDocument newDoc =loadWorkflow(partitionName,wfFolderId,wfdata);
+		  WorkflowParameterList parameters =new WorkflowParameterList();
+		 api.executeWorkflow((WorkflowDocument) newDoc, parameters, (long)-1, null);
+	}
+	
+	public void executeWF(DefaultDrawingModel drawing,String partitionName,StorageClient Sclient,HashMap<String, ByteArrayOutputStream> result) throws Exception{
 	//	JSONDrawingExporter exporter = new JSONDrawingExporter(drawing); 
 			String wfFolderId=null;
 			EscFolder home=Sclient.homeFolder();
@@ -175,4 +210,5 @@ public class deployWFIm implements deployWF {
 			 result.put(thename[0], outStream);
 		 }*/
 	}
+	
 }

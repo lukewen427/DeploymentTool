@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 
 import org.pipeline.core.drawing.model.DefaultDrawingModel;
+import org.pipeline.core.xmlstorage.XmlDataStore;
 
 import uk.ac.ncl.cs.esc.connection.connection;
 
@@ -20,6 +21,10 @@ public interface deployWF {
 public HashMap<String,String> fileUpload(HashMap<String, ByteArrayOutputStream> theresults,StorageClient Sclient)throws Exception;
 public DataProcessorBlock createBlock(String serivceId )throws Exception ;
 public DocumentRecord  createWorkflow(String name,DefaultDrawingModel drawing,String wfFolderId) throws Exception;
-public void executeWF(DefaultDrawingModel drawing,String partitionName,StorageClient Sclient, WorkflowClient wfClient,
+public void executeWF(DefaultDrawingModel drawing,String partitionName,StorageClient Sclient,
 															HashMap<String, ByteArrayOutputStream> result) throws Exception;
+
+public DocumentRecord loadWorkflow(String name, String wfFolderId, XmlDataStore wfdata) throws Exception;
+
+public void execute(String partitionName,StorageClient Sclient,XmlDataStore wfdata) throws Exception;
 }

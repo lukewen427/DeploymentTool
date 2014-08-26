@@ -71,7 +71,6 @@ public class PartitionGraph {
 	}
 	
 	
-	
 	public ArrayList<Integer>  getRootPartition(HashMap<Integer,ArrayList<Object>>partitionGraph,workflowInfo workflowinfo,BlockSet blockSet){
 		ArrayList<Integer> rootPartition=new ArrayList<Integer>();
 		ArrayList<String> root=workflowinfo.getRootNodes();

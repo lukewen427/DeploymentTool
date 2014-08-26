@@ -63,8 +63,8 @@ public class downloadWF {
 		//    WorkflowDocument newworkflow=de.createWorkflow("test2", drawing);
 		     HashMap<String, ByteArrayOutputStream> result=new HashMap<String, ByteArrayOutputStream>();
 		     StorageClient Sclient =con.getStorageAPI();
-			 WorkflowClient wfClient=con.getWorkflowAPI();
-			de.executeWF(drawing, "test2", Sclient, wfClient, result);
+		//	 WorkflowClient wfClient=con.getWorkflowAPI();
+			de.executeWF(drawing, "test2", Sclient, result);
 	}
 	
 	private static void createblock(int b,DataProcessorBlock Block,String documentId,String serviceId,API api,

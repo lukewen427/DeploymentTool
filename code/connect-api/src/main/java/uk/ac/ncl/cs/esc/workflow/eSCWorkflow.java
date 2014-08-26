@@ -86,7 +86,7 @@ public class eSCWorkflow {
 		}
 		
 		HashMap<String, ByteArrayOutputStream> result=new HashMap<String, ByteArrayOutputStream>();
-		wf.executeWF(drawing, partitionName, Sclient, wfClient, result);
+		wf.executeWF(drawing, partitionName, Sclient,  result);
 	//	getResult(drawing,partitionName,wf,api,result);
         return result;  
 	}
