@@ -28,21 +28,10 @@ public class eSCPartition {
 	String importPORT="imported-data";
 	// the input port of CSVExport
 	String exportPORT="input-data";
-	public eSCPartition(String workflowId){
-		cloudConnection coCloud=new cloudConnection();
-		connection con=coCloud.creatCon("cloud0");
-		this.orgWorkflow=new workflowInfoIm(con);
-		this.orgWorkflowId=workflowId;
-		try {
-			this.connections=orgWorkflow.getConnection(orgWorkflowId);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-	public HashMap<String,ByteArrayOutputStream> createSCWorkflow(String cloudName,HashMap<String, String> partition,
-			ArrayList<String> heads,HashMap<String, ByteArrayOutputStream> theresults) throws Exception{
-		
+	
+	public HashMap<String,ByteArrayOutputStream> createSCWorkflow(String cloudName,String partitionName,HashMap<String, String> partition,
+			ArrayList<String> heads,HashMap<String, ByteArrayOutputStream> theresults,ArrayList<ArrayList<String>> connections) throws Exception{
+		this.connections=connections;
 		cloudConnection coCloud=new cloudConnection();
 		connection con=coCloud.creatCon(cloudName);
 		API api=con.getAPI();
@@ -57,7 +46,7 @@ public class eSCPartition {
 		DefaultDrawingModel drawing = new DefaultDrawingModel();
 		for(String headNode: heads){
 			String blockId=headNode;
-			String serviceId=orgWorkflow.getBlockServiceId(blockId, orgWorkflowId);
+			String serviceId=partition.get(blockId);
 			DataProcessorBlock serviceBlock;
 			if(serviceId.equals(importservice)){
 				String documentId=null;
@@ -93,20 +82,20 @@ public class eSCPartition {
 				}
 			
 			offspringNodes( serviceBlock,headNode,partition,
-					drawing,b,wf,api,new ArrayList<String>());
+					drawing,b,wf,api,new ArrayList<String>(),resultInfo);
 		  }
 		  HashMap<String, ByteArrayOutputStream> result=new HashMap<String, ByteArrayOutputStream>();
 		  //   StorageClient Sclient =con.getStorageAPI();
 		//	 WorkflowClient wfClient=con.getWorkflowAPI();
-		    wf.executeWF(drawing, "esc", Sclient, result);
+		    wf.executeWF(drawing, partitionName, Sclient, result);
 		
-		return null;
+		return result;
 		
 	}
 	
 	private void offspringNodes(DataProcessorBlock serviceBlock,
 			String startNode, HashMap<String, String> partition, DefaultDrawingModel drawing,
-			int b, deployWF wf, API api, ArrayList<String> visited) throws Exception {
+			int b, deployWF wf, API api, ArrayList<String> visited,HashMap<String,String> resultInfo) throws Exception {
 		 	visited.add(startNode);
 		 	for(int a=0;a<connections.size();a++){
 		 		ArrayList<String> connection=connections.get(a);
@@ -119,8 +108,8 @@ public class eSCPartition {
 						String serviceName=null;
 						String documentId=null;
 						String offspringSeviceId=partition.get(destination);
-						System.out.println(destination);
-						System.out.println(offspringSeviceId);
+					//	System.out.println(destination);
+					//	System.out.println(offspringSeviceId);
 						DataProcessorBlock Block = wf.createBlock(offspringSeviceId);
 						createblock(b,Block,documentId,offspringSeviceId,api,drawing,serviceName);
 						b++;
@@ -135,33 +124,76 @@ public class eSCPartition {
 							}
 						}
 						drawing.connectPorts(serviceBlock.getOutput(outputPort),Block.getInput(inputPort));
-						offspringNodes(Block,destination,partition,drawing,b,wf,api,visited);
-					}
-				}
-				
-				if(!partition.containsKey(destination)){
-					String theserviceName=startNode+","+destination;
-					String theserviceId=exportservice;
-					DataProcessorBlock exportBlock = wf.createBlock(theserviceId);
-					createblock(b,exportBlock,null,theserviceId, api,drawing,theserviceName);
-					b++;
-					for(int fx=0;fx<connections.size();fx++){
-						ArrayList<String> connect=connections.get(fx);
-						String sNode=connect.get(0);
-						String eNode=connect.get(1);
-				//		System.out.println(blockId);
-				//		System.out.println(theserviceName);
-						if(startNode.equals(sNode)&&eNode.equals(destination)){
-							outputPort=connect.get(4);
-							inputPort=connect.get(5);
-							break;
+						// add the input block which not in the partition
+						ArrayList<String>sNode=getSourceNode(destination);
+						if(!sNode.isEmpty()){
+							for(int i=0;i<sNode.size();i++){
+								String nodeId=sNode.get(i);
+								if(!partition.containsKey(nodeId)){
+									for(int h=0;h<connections.size();h++){
+										ArrayList<String> link=connections.get(h);
+										String s=link.get(0);
+										String d=link.get(1);
+										if(d.equals(destination)&&s.equals(nodeId)){
+											String findId=s+","+d;
+										    documentId=resultInfo.get(findId);
+											String input=link.get(5);
+											String theserviceId=importservice;
+											DataProcessorBlock importBlock = wf.createBlock(theserviceId);
+											createblock(b,importBlock,documentId,theserviceId,api,drawing,"import");
+											b++;
+											drawing.connectPorts(importBlock.getOutput(importPORT),serviceBlock.getInput(input));
+										  }
+										}
+								}
+							}
 						}
 						
+						offspringNodes(Block,destination,partition,drawing,b,wf,api,visited,resultInfo);
+					}
+					if(!partition.containsKey(destination)){
+						String theserviceName=startNode+","+destination;
+						String theserviceId=exportservice;
+						DataProcessorBlock exportBlock = wf.createBlock(theserviceId);
+						createblock(b,exportBlock,null,theserviceId, api,drawing,theserviceName);
+						b++;
+						for(int fx=0;fx<connections.size();fx++){
+							ArrayList<String> connect=connections.get(fx);
+							String sNode=connect.get(0);
+							String eNode=connect.get(1);
+					//		System.out.println(blockId);
+					//		System.out.println(theserviceName);
+							if(startNode.equals(sNode) && eNode.equals(destination)){
+							
+								outputPort=connect.get(4);
+								inputPort=connect.get(5);
+								break;
+							}
+							
+						}
 						drawing.connectPorts(serviceBlock.getOutput(outputPort),exportBlock.getInput(exportPORT));
 					}
 				}
+				
 		 	}
 		
+	}
+	
+	ArrayList<String> getSourceNode(String destination){
+		ArrayList<String> dNode=new ArrayList<String>();
+		for(int a=0;a<connections.size();a++){
+		
+			String source=connections.get(a).get(0);
+			String des=connections.get(a).get(1);
+			if(destination.equals(des)){
+				if(!dNode.contains(source)){
+					dNode.add(source);
+				}
+			}
+			
+		}
+		
+		return dNode;
 	}
 	
 	private static void createblock(int b, DataProcessorBlock Block,

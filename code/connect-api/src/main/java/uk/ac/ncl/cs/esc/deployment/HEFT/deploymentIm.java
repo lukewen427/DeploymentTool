@@ -38,6 +38,7 @@ public class deploymentIm implements deployment {
 		setLinks(getGraph);
 		setRoot(getGraph);
 		setLeaf(getGraph);
+		
 	}
 	
 	public LinkedList<ArrayList<Integer>> getOrder(){
@@ -56,13 +57,16 @@ public class deploymentIm implements deployment {
 	
 	private void setLinks(PartitionGraph getGraph){
 		this.deploylinks=getGraph.getLinks(pLinks, partitionGraph, blockSet);
+	//	System.out.println(deploylinks);
 		
 	}
 	void setRoot(PartitionGraph getGraph){
 		this.root=getGraph.getRootPartition(partitionGraph, workflowinfo, blockSet);
+	//	System.out.println(root);
 	}
 	void setLeaf(PartitionGraph getGraph){
 		this.leaf=getGraph.getLeafPartition(partitionGraph, workflowinfo, blockSet);
+	//	System.out.println(leaf);
 	}
 	
 	public void createDeployGraph(){
@@ -71,7 +75,6 @@ public class deploymentIm implements deployment {
 	//	System.out.println(leaf);
 		getOrder.createOrder(leaf, deploylinks, order, new ArrayList<Integer>((ArrayList<Integer>)leaf.clone()));
 		inverse(order);
-		
 	}
 	
 	private void inverse(LinkedList<ArrayList<Integer>> order){

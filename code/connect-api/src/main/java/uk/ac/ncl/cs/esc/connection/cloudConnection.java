@@ -12,6 +12,7 @@ public class cloudConnection {
 		String hostname = null;
 		switch(cloudName){
 		case "cloud0": hostname="10.66.66.176";
+		case "cloud1": hostname="10.66.66.176";
 		} 
 //		System.out.println(hostname);
 		connection con=new connectionIm();

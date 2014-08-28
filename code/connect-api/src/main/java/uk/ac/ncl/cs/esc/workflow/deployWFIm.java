@@ -189,7 +189,25 @@ public class deployWFIm implements deployWF {
 	     WorkflowDocument newDoc = createWorkflow(partitionName, drawing,wfFolderId);
 		 WorkflowParameterList parameters =new WorkflowParameterList();
 		 
-		api.executeWorkflow((WorkflowDocument) newDoc, parameters, (long)-1, null);
+		 WorkflowInvocationFolder inv=api.executeWorkflow((WorkflowDocument) newDoc, parameters, (long)-1, null);
+		 
+		 while (inv.statusToString(inv.getInvocationStatus()).equals("Waiting") || 
+				 	inv.statusToString(inv.getInvocationStatus()).equals("Running") 
+				 || inv.statusToString(inv.getInvocationStatus()).equals("Waiting for a debugger") ){
+			 Thread.sleep(5000);
+			 inv=api.getWorkflowInvocation(inv.getInvocationId()); 
+		 }
+		 
+		 EscDocument[] produces=Sclient.folderDocuments(inv.getId());
+		 for(EscDocument doc:produces){
+			 String name=doc.getName();
+			 String[] thename=name.split("\\.");
+			 ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+			 Sclient.download(doc, outStream);
+			 outStream.flush();
+			 result.put(thename[0], outStream);
+		 }
+		 
 	///	EscWorkflowParameterList p = new EscWorkflowParameterList();
 		
 	/*	EscWorkflowInvocation invocation=wfClient.executeWorkflow("937");

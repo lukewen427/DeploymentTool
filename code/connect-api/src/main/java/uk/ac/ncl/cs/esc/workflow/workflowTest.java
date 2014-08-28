@@ -19,7 +19,7 @@ public class workflowTest {
 	public static void main(String [] args) throws Exception{
 		cloudConnection test=new cloudConnection();
 		connection con=test.creatCon("cloud0");
-		String workflowId="937";
+		String workflowId="1045";
 		WorkflowInfo workflow= new workflowInfoIm(con);
 		HashMap<String, String>blocks=workflow.Blocklist(workflowId);
 	//	System.out.println(blocks);
@@ -27,10 +27,10 @@ public class workflowTest {
 		ArrayList<String> head=getHead(connection);
 		HashMap<String, String> partition=getPartition(blocks,workflowId,workflow);
 	//	 System.out.println(head);
-//		 System.out.println(connection);
-		eSCPartition dep=new eSCPartition(workflowId);
+ 		 System.out.println(connection);
+//		eSCPartition dep=new eSCPartition(workflowId);
 		
-		dep.createSCWorkflow("cloud0", partition, head,new HashMap<String, ByteArrayOutputStream>());
+//		dep.createSCWorkflow("cloud0", partition, head,new HashMap<String, ByteArrayOutputStream>());
 	
 	}
 	private static HashMap<String, String> getPartition(HashMap<String, String>blocks,String workflowId,WorkflowInfo workflow) throws Exception{

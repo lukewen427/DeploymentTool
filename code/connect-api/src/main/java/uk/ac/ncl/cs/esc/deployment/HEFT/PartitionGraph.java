@@ -81,7 +81,9 @@ public class PartitionGraph {
 				int partitionName=keys.next();
 				ArrayList<Object> partition=partitionGraph.get(partitionName);
 				if(partition.contains(rootNode)){
-					rootPartition.add(partitionName);
+					if(!rootPartition.contains(partitionName)){
+					 rootPartition.add(partitionName);
+					}
 				}
 			}
 		}
@@ -101,7 +103,9 @@ public class PartitionGraph {
 				int partitionName=keys.next();
 				ArrayList<Object> partition=partitionGraph.get(partitionName);
 				if(partition.contains(leafNode)){
+					if(!leafPartition.contains(partitionName)){
 					leafPartition.add(partitionName);
+					}
 				 }
 				}
 			}

@@ -197,7 +197,7 @@ public class readWorkflow {
 		Cloud cloud0;
 		Cloud cloud1;
 		cloud0=new Cloud("Cloud0","0","10.66.66.176",2,2,5);
-		cloud1=new Cloud("Cloud1","1","10.8.149.11",5,5,10);
+		cloud1=new Cloud("Cloud1","1","10.66.66.176",5,5,10);
 		cloudSet.add(cloud0);
 		cloudSet.add(cloud1);
 		return cloudSet;
