@@ -7,7 +7,7 @@ public class Cloud {
 	private String name;
 //	private String securityLevel;
 	private String cloudip;
-//	private int StorageCost;
+//	private int StorageCost; 
 //	private double TransferIn;
 //	private double TransferOut;
 //	private double CPUCost;

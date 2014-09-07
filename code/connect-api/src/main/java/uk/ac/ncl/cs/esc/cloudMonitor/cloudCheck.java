@@ -4,24 +4,35 @@ package uk.ac.ncl.cs.esc.cloudMonitor;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class cloudCheck {
 
 	String url="/Users/zhenyuwen/git/ExceptionHandler/website/statues.txt";
 	
 	
-	public boolean checkCloud(String cloudip){
-		
-		HashMap<String,String>machines=getCloud();
-		String staute=machines.get(cloudip);
-		if(staute.equals("ON")){
-			return true;
-		}else{
-			return false;
+	List<String> cloudSet; 
+	public cloudCheck(){
+		try {
+		this.cloudSet=getCloud();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		
 	}
 	
+	public boolean checkCloud(String cloudName){
+	
+			
+			if(cloudSet.contains(cloudName)){
+				return true;
+			}
+	
+	//	String staute=machines.get(cloudip);
+	     return false;
+		
+	}
+	/*
 	private HashMap<String,String>  getCloud(){
 		getClouds clouds=new getClouds();
 		HashMap<String,String> machines = null;
@@ -32,9 +43,14 @@ public class cloudCheck {
 			e.printStackTrace();
 		}
 		return machines;
-	}
+	}*/
 	
-
+private List<String> getCloud() throws IOException{
+	getClouds clouds=new getClouds();
+	
+	return clouds.getHttp(url);
+	
+}
 
 	public static void main(String[] arg) throws IOException{
 	//	getDeployment test=new getDeployment();
