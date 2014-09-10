@@ -15,6 +15,7 @@ public class runningPartition implements Runnable {
 	   String cloudName;
 	   HashMap<String,String> partition;
 	   String staute="checking";
+	   boolean kill=false;
 	   ArrayList<ArrayList<String>> connections;
 		HashMap<String,ByteArrayOutputStream>newresults=new HashMap<String,ByteArrayOutputStream>();
 	public runningPartition(String cloudName,HashMap<String,String> partition, ArrayList<ArrayList<String>> connections,int partitionid){
@@ -32,31 +33,38 @@ public class runningPartition implements Runnable {
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		String partitionName="Partition"+partitionid;
-		HashMap<String,ByteArrayOutputStream> results=dataStorage.getData();
-	    try {
-	    	 ArrayList<String> heads=getHead();
-	    	 staute="running";
-			 newresults=dep.createSCWorkflow(cloudName, partitionName, partition, heads, results, connections);
-			 while(newresults.isEmpty()){
-				 try {
-		    		 Thread.sleep(500);
-		    	 } catch (Exception e){}
+		if(kill==false){
+			String partitionName="Partition"+partitionid;
+			HashMap<String,ByteArrayOutputStream> results=dataStorage.getData();
+		    try {
+		    	 ArrayList<String> heads=getHead();
+		    	 staute="running";
+				 newresults=dep.createSCWorkflow(cloudName, partitionName, partition, heads, results, connections);
+				 while(newresults.isEmpty()){
+					 try {
+			    		 Thread.sleep(500);
+			    	 } catch (Exception e){}
+				}
+				
+				staute="finish";
+				 
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				staute="fail";
+				e.printStackTrace();
 			}
-			
-			staute="finish";
-			 
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			staute="fail";
-			e.printStackTrace();
+		    
+		    if(staute.equals("finish")){
+				System.out.println("Start writting results");
+				 resultsStoring(newresults);
+			 }
 		}
-	    
-	    if(staute.equals("finish")){
-			System.out.println("Start writting results");
-			 resultsStoring(newresults);
-		 } 
+ 
 	}
+	
+ public void stop(){
+	 kill=true;
+ }
 	
 private synchronized void resultsStoring(HashMap<String,ByteArrayOutputStream> newResults){
 		

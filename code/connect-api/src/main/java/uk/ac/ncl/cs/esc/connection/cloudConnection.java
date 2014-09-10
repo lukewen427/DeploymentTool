@@ -11,8 +11,9 @@ public class cloudConnection {
 	public connection creatCon(String cloudName){
 		String hostname = null;
 		switch(cloudName){
-		case "cloud0": hostname="10.66.66.176";
 		case "cloud1": hostname="10.66.66.176";
+		case "cloud2": hostname="10.66.66.176";
+		case "cloud3": hostname="10.66.66.176";
 		} 
 //		System.out.println(hostname);
 		connection con=new connectionIm();
@@ -22,7 +23,7 @@ public class cloudConnection {
 	
 	public static void main(String [] args) throws Exception{
 		cloudConnection test=new cloudConnection();
-		connection con=test.creatCon("cloud0");
+		connection con=test.creatCon("cloud1");
 		 WorkflowClient wfClient=con.getWorkflowAPI();
 		 StorageClient client =con.getStorageAPI();
 	//	 EscUser currentUser = client.currentUser();

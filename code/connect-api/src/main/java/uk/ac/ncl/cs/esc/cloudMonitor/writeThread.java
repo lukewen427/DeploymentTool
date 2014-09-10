@@ -2,7 +2,7 @@ package uk.ac.ncl.cs.esc.cloudMonitor;
 
 public class writeThread extends Thread {
 	public writeThread(){
-		String avaCloud="cloud1,cloud2";
+		String avaCloud="cloud1,cloud3";
 		write w=new write();
 		w.writeFile(avaCloud);
 	}

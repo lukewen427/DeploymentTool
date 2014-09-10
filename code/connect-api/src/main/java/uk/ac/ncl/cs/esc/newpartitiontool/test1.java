@@ -2,6 +2,13 @@ package uk.ac.ncl.cs.esc.newpartitiontool;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+
+import uk.ac.ncl.cs.esc.cloudMonitor.CloudPool;
+import uk.ac.ncl.cs.esc.cloudMonitor.cloudMonitorIm;
+import uk.ac.ncl.cs.esc.cloudMonitor.writeThread;
+import uk.ac.ncl.cs.esc.read.Cloud;
 
 public class test1 {
 public static void main(String args[]) throws Exception{
@@ -108,9 +115,30 @@ public static void main(String args[]) throws Exception{
 		connections.add(temp3);
 		connections.add(temp4);
 		connections.add(temp5);
-			
+		Set<Cloud> cloudSet=new HashSet<Cloud>();
+		
+		String cloud1="cloud1";
+		String cloud2="cloud2";
+		String cloud3="cloud3";
+		String cloud1ip="10.66.66.176";
+		String cloud2ip="10.66.66.176";
+		String cloud3ip="10.66.66.176";
+		
+		Cloud c1=new Cloud(cloud1,"0",cloud1ip,2,2,5);
+		Cloud c2=new Cloud(cloud2,"1",cloud2ip,5,5,10);
+		Cloud c3=new Cloud(cloud3,"2",cloud3ip,5,5,10);
+		cloudSet.add(c1);
+		cloudSet.add(c2);
+		cloudSet.add(c3);
+		new CloudPool(cloudSet);
+		writeThread p=new writeThread();
+		p.start();
+		
+		cloudMonitorIm cm=new cloudMonitorIm();
+		cm.initAvaClouds(cloudSet);
 	  //   new readInfo(blockInfo,workflowId,connections);
-	       new prepareDeployment(workflowId, connections, blockInfo);
+	//	cloudMonitorIm cm = new cloudMonitorIm();
+	       new prepareDeployment(workflowId, connections, blockInfo,cm);
 		
 	}
 }

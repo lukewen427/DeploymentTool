@@ -4,11 +4,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
 import com.google.common.collect.HashBiMap;
 
+import uk.ac.ncl.cs.esc.cloudMonitor.CloudPool;
+import uk.ac.ncl.cs.esc.cloudMonitor.CloudPool.Clouds;
+import uk.ac.ncl.cs.esc.cloudMonitor.cloudMonitorIm;
 import uk.ac.ncl.cs.esc.newpartitiontool.*;
 
 
@@ -21,11 +25,14 @@ public class readWorkflow {
 	    int [][] ssecurity;
 	    int [][] deployment;
 	    Set<Cloud> cloudSet=new HashSet<Cloud>();
+	    LinkedList<String> avaClouds;
 	String workflowId;
 	ArrayList<ArrayList<String>> connections;
 	HashMap<String,ArrayList<String>> blockInfo;
 	HashBiMap< String,Integer> biMap= HashBiMap.create();
-	public readWorkflow(String workflowId, ArrayList<ArrayList<String>> connections,HashMap<String,ArrayList<String>> blockInfo){
+	cloudMonitorIm cm;
+	public readWorkflow(String workflowId, ArrayList<ArrayList<String>> connections,HashMap<String,ArrayList<String>> blockInfo,cloudMonitorIm cm){
+		this.cm=cm;
 		this.workflowId=workflowId;
 		this.connections=connections;
 		this.blockInfo=blockInfo;
@@ -46,7 +53,7 @@ public class readWorkflow {
 	}
 	
 	void initial(){
-		getClouds();
+	//	getClouds();
 		creatWorkflow();
 		createdataSecurity();
 		createCCost();
@@ -71,7 +78,7 @@ public class readWorkflow {
 //		List<Integer> lists =n1.sortBest();
     //	System.out.println(lists);
 //		System.out.println("Sort:"+n1.calCost(lists));
-	//	printInt(deployment);
+		printInt(deployment);
 	}
 	void creatWorkflow(){
 		workflow=new double[blockInfo.size()][blockInfo.size()];
@@ -124,27 +131,29 @@ public class readWorkflow {
 	}
 	private  void setCloud(){
 			Iterator<Cloud> thecloud=cloudSet.iterator();
+			int a=0;
 			while(thecloud.hasNext()){
 				Cloud singlecloud=thecloud.next();
-				int cloudName=singlecloud.getNumber();
+			//	int cloudName=singlecloud.getNumber();
 				int cloudSecurity=Integer.valueOf(singlecloud.getCloudsecurityLevel());
 				double incoming=Double.valueOf(singlecloud.getTransferin());
 				double outgoing=Double.valueOf(singlecloud.getTransferout());
-				setCloud(cloudName,incoming,outgoing);
-				cloud[cloudName]=cloudSecurity;
+				setCloud(a,incoming,outgoing);
+				cloud[a]=cloudSecurity;
 			}
 		}
 	
 	void setCloud(int Cloud,double in,double out){
 		Iterator<Cloud> thecloud=cloudSet.iterator();
+		int a=0;
 		while(thecloud.hasNext()){
 			Cloud singlecloud=thecloud.next();
-			int cloudName=singlecloud.getNumber();
-			if(Cloud!=cloudName){
+	//		int cloudName=singlecloud.getNumber();
+			if(Cloud!=a){
 				double incoming=Double.valueOf(singlecloud.getTransferin());
 				double outgoing=Double.valueOf(singlecloud.getTransferout());
-				setComCost(Cloud,cloudName,out+incoming);
-				setComCost(cloudName,Cloud,outgoing+in);
+				setComCost(Cloud,a,out+incoming);
+				setComCost(a,Cloud,outgoing+in);
 			}
 		}
 	}
@@ -178,28 +187,43 @@ public class readWorkflow {
 	// input is the execution time of service
 	 void setCPU(int block,double time){
 		Iterator<Cloud> thecloud=cloudSet.iterator();
+		int a=0;
 		while(thecloud.hasNext()){
 			Cloud cloud=thecloud.next();
-			int cloudName=cloud.getNumber();
+		//	int cloudName=cloud.getNumber();
 			double cpuCost=cloud.getCPUcost();
 			double cost=cpuCost*time;
-			cpucost[block][cloudName]=cost;
+			cpucost[block][a]=cost;
+			a++;
 		}
 	}
 	
 	void setDataSecurity(int startNode,int endNode,int security){
 		dataSecurity[startNode][endNode]=security;
 	}
-	
+	public LinkedList<String> getAVAClouds(){
+		return avaClouds;
+	}
 	
 	public Set<Cloud> getClouds() {
+		
 		Set<Cloud> cloudSet=new HashSet<Cloud>();
-		Cloud cloud0;
+		this.avaClouds=cm.getAvaClouds();
+		for(String cloudName:avaClouds){
+			Cloud c=Clouds.getCloud(cloudName);
+	//		System.out.println(cloudName);
+			if(!cloudSet.contains(c)){
+				cloudSet.add(c);
+			}
+		}
+		
+		
+		/*Cloud cloud0;
 		Cloud cloud1;
 		cloud0=new Cloud("Cloud0","0","10.66.66.176",2,2,5);
 		cloud1=new Cloud("Cloud1","1","10.66.66.176",5,5,10);
 		cloudSet.add(cloud0);
-		cloudSet.add(cloud1);
+		cloudSet.add(cloud1);*/
 		return cloudSet;
 	}
 	

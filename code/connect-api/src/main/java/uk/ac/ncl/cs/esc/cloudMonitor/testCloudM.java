@@ -4,10 +4,12 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
+import uk.ac.ncl.cs.esc.read.Cloud;
+
 public class testCloudM {
 	public static void main(String args[]) throws InterruptedException{
 		
-		Set<Cloud> cloudSet=new HashSet<Cloud>();
+		/*Set<Cloud> cloudSet=new HashSet<Cloud>();
 		String cloud1="cloud1";
 		String cloud2="cloud2";
 		String cloud3="cloud3";
@@ -40,7 +42,7 @@ public class testCloudM {
 	
 		
 		System.out.println("is clouds statues change:"+cm.statuesChange(temp2));
-		System.out.println("available clouds:"+cm.getAvaClouds());
+		System.out.println("available clouds:"+cm.getAvaClouds());*/
 	
 	
 	}

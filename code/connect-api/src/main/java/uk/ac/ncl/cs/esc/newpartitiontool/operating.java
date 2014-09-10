@@ -32,9 +32,18 @@ public class operating {
 		LinkedList<ArrayList<Integer>> deployOrder=deploy.getOrder();
 	//	System.out.println(deployOrder);
 		ArrayList<ArrayList<String>> connections=workflowinfo.getConnections();
-		workflowDeployment escDe=new workflowDeployment(deploy,connections);
+		LinkedList<String> avaClouds=workflowinfo.getAvaClouds();
+		workflowDeployment escDe=new workflowDeployment(deploy,connections,workflowinfo);
 		Thread t= new Thread(escDe);
 		t.start();
+		while(t.isAlive()){
+			Thread.sleep(1000);
+		}
+		if(escDe.getWorkflowStatue().equals("fail") ||escDe.getWorkflowStatue().equals("cloudChange")){
+			
+		}else{
+			System.out.println("workflow is completely executed");
+		}
 	}
 	
 	private void setDeploy(deploymentIm deploy,workflowInfo workflowinfo){

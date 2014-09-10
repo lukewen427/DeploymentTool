@@ -2,10 +2,13 @@ package uk.ac.ncl.cs.esc.deployment.HEFT;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Set;
 
+import uk.ac.ncl.cs.esc.newpartitiontool.prepareDeployment.workflowInfo;
 import uk.ac.ncl.cs.esc.read.Block;
 
 public class workflowDeployment implements Runnable {
@@ -15,11 +18,21 @@ public class workflowDeployment implements Runnable {
 	Hashtable<runningPartition,Thread> runningPartitions=new Hashtable<runningPartition,Thread>();
 	ArrayList<Integer> exceutedNode=new ArrayList<Integer>();
 	ArrayList<ArrayList<String>> connections;
-	public workflowDeployment (deploymentIm deploy,	ArrayList<ArrayList<String>> connections){
+	LinkedList<String> avaClouds;
+	Set<Integer> unproPartition=new HashSet<Integer>();
+	boolean killThread=false;
+	workflowInfo workflowinfo;
+	String worklfowStatues;
+	public workflowDeployment (deploymentIm deploy,	ArrayList<ArrayList<String>> connections,workflowInfo workflowinfo){
+		this.workflowinfo=workflowinfo;
 		this.deploy=deploy;
 		this.connections=connections;
+		this.avaClouds =workflowinfo.getAvaClouds();
+		this.worklfowStatues="running";
 		setDeployOrder();
 		setPartitionGraph();
+		 initUNPParition();
+	//	boolean killThread=false;
 	}
 	@Override
 	public void run() {
@@ -27,9 +40,18 @@ public class workflowDeployment implements Runnable {
 		
 		
 		for(int i=0;i<deployOrder.size();i++){
+			if(killThread){
+				break;
+			}
 			ArrayList<Integer> step=deployOrder.get(i);
 				Deployment(step);	
-			while(!runningPartitions.isEmpty()){
+			while(!runningPartitions.isEmpty() && (killThread==false)){
+				if(isnewCloud()){
+					// this is for calculate the cost of the new clouds. if cheaper, shift to new clouds.
+					
+				}else{
+					
+				}
 				Iterator<runningPartition> keys=runningPartitions.keySet().iterator();
 				while(keys.hasNext()){
 					runningPartition excu=keys.next();
@@ -46,16 +68,24 @@ public class workflowDeployment implements Runnable {
 					if(excu.checkStautes().equals("finish")){
 						removePartition(excu);
 						exceutedNode.add(node);
+						unproPartition.remove(node);
+					}
+					
+					if(excu.checkStautes().equals("fail")){
+						stopWorkers();
+						this.worklfowStatues="fail";
 					}
 				}
 			}
 		}
+		
+		this.worklfowStatues="finish";
 	}
 	private void Deployment(ArrayList<Integer> step) {
 		for(int node:step){
 			ArrayList<Object> partition=partitionGraph.get(node);
 			int cloud=(int) partition.get(0);
-			String cloudName="cloud"+cloud;
+			String cloudName=avaClouds.get(cloud);
 			if(exceutedNode.contains(node)){
 				
 			}else{
@@ -70,6 +100,12 @@ public class workflowDeployment implements Runnable {
 		
 	}
 	
+	private boolean isnewCloud(){
+		if(avaClouds.size()<workflowinfo.getAvaClouds().size()){
+			return true;
+		}
+		return false;
+	}
 	HashMap<String,String> converse(ArrayList<Object> partition){
 		HashMap<String,String> newPartition=new HashMap<String,String>();
 		for(int a=1;a<partition.size();a++){
@@ -86,6 +122,9 @@ public class workflowDeployment implements Runnable {
 	void setPartitionGraph(){
 		 this.partitionGraph=deploy.getPartitionGraph();
 	 }
+	void initUNPParition(){
+		this.unproPartition=partitionGraph.keySet();
+	}
 	
 	public synchronized void addNewPartition(runningPartition excu,Thread t){
 		
@@ -95,5 +134,28 @@ public class workflowDeployment implements Runnable {
 	public synchronized void removePartition(runningPartition excu){
 		
 		runningPartitions.remove(excu);
+	}
+	
+	public void stopThread(){
+		killThread=true;
+	}
+	
+	public Set<Integer> getUnPPartition(){
+		return unproPartition;
+	}
+	
+	public String getWorkflowStatue(){
+		return worklfowStatues; 
+	}
+	private void stopWorkers(){
+		if(!runningPartitions.isEmpty()){
+			Iterator<runningPartition> keys=runningPartitions.keySet().iterator();
+			while(keys.hasNext()){
+				runningPartition excu=keys.next();
+				excu.stop();
+				removePartition(excu);
+			}
+		}
+		stopThread();
 	}
 }

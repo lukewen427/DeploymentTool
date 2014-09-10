@@ -7,6 +7,7 @@ import java.util.Set;
 
 import uk.ac.ncl.cs.esc.cloudMonitor.CloudPool.Clouds;
 import uk.ac.ncl.cs.esc.cloudchange.avaClouds;
+import uk.ac.ncl.cs.esc.read.Cloud;
 
 public class cloudMonitorIm implements cloudMonitor{
 	

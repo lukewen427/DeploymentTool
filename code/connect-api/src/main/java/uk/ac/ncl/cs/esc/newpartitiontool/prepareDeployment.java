@@ -4,16 +4,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Set;
 
 import com.google.common.collect.HashBiMap;
 
+import uk.ac.ncl.cs.esc.cloudMonitor.cloudMonitorIm;
 import uk.ac.ncl.cs.esc.connection.cloudConnection;
 import uk.ac.ncl.cs.esc.connection.connection;
 import uk.ac.ncl.cs.esc.read.Block;
 import uk.ac.ncl.cs.esc.read.BlockSet;
 import uk.ac.ncl.cs.esc.read.Cloud;
-import uk.ac.ncl.cs.esc.read.CloudSet;
 import uk.ac.ncl.cs.esc.read.readWorkflow;
 import uk.ac.ncl.cs.esc.workflow.WorkflowInfo;
 import uk.ac.ncl.cs.esc.workflow.workflowInfoIm;
@@ -22,10 +23,10 @@ public class prepareDeployment {
 
 	final workflowInfo workflowinfo;
   public prepareDeployment(String workflowId, ArrayList<ArrayList<String>> connections,
-												HashMap<String,ArrayList<String>> blockInfo){
-	this.workflowinfo= new workflowInfo(workflowId,connections,blockInfo);
+												HashMap<String,ArrayList<String>> blockInfo,cloudMonitorIm cm){
+	this.workflowinfo= new workflowInfo(workflowId,connections,blockInfo,cm);
 	 try {
-		new operating(workflowinfo);
+	//	new operating(workflowinfo);
 	} catch (Exception e) {
 
 		e.printStackTrace();
@@ -43,21 +44,22 @@ public class prepareDeployment {
 	    HashBiMap< String,Integer> biMap;
 	    double workflow[][];
 	    BlockSet blockSet;
-	    CloudSet clouds;
+	    LinkedList<String> avaClouds;
 	    
 	    public workflowInfo(String workflowId, ArrayList<ArrayList<String>> connections,
-				HashMap<String,ArrayList<String>> blockInfo){
+				HashMap<String,ArrayList<String>> blockInfo,cloudMonitorIm cm){
 	    	
 	    	setWorkflowId(workflowId);
 	    	setConnections(connections);
 	    	setBlockInfo(blockInfo);
-	    	readWorkflow read=new readWorkflow(workflowId, connections,blockInfo);
+	    	readWorkflow read=new readWorkflow(workflowId, connections,blockInfo,cm);
 	    	setDeployment(read.getDeployment());
-	    	setCloudset(read.getClouds());
+	     	setAvaClouds(cm.getAvaClouds());
 	    	setMaps(read.getMap());
 	    	setWorkflow(read.getWorkflow());
 	    	setRootNodes();
 	    	setLeafNodes();
+	    
 	    	try {
 	    		setBlockSet();
 			} catch (Exception e) {
@@ -66,7 +68,10 @@ public class prepareDeployment {
 			}
 	    	
 	    }
-	  void setWorkflowId(String workflowId){
+	void setAvaClouds(LinkedList<String> avaClouds){
+		this.avaClouds=avaClouds;
+	}
+	void setWorkflowId(String workflowId){
 		  this.workflowId=workflowId;
 	  }
 	  
@@ -82,12 +87,7 @@ public class prepareDeployment {
 		  this.deployment=deployment;
 	  }
 	  
-	  void setCloudset( Set<Cloud> cloudSet){
-		  
-		  this.cloudSet=cloudSet;
-		 this.clouds=new CloudSet(cloudSet);
-	  } 
-	  
+	
 	  void setMaps(HashBiMap< String,Integer> biMap){
 		  this.biMap=biMap;
 	  }
@@ -107,10 +107,11 @@ public class prepareDeployment {
 	  public int [][] getDeployment(){
 			return deployment;
 		}
-	  public CloudSet getClouds(){
-		  return clouds;
-	  }
 	  
+	  public LinkedList<String> getAvaClouds(){
+		  return avaClouds;
+	  }
+	
 	  void setRootNodes(){
 		  for(int a=0;a<workflow.length;a++){
 			  boolean isRoot=true;
@@ -156,7 +157,7 @@ public class prepareDeployment {
 	  void setBlockSet() throws Exception{
 		     Block theblock;
 			cloudConnection test=new cloudConnection();
-			connection con=test.creatCon("cloud0");
+			connection con=test.creatCon("cloud1");
 			WorkflowInfo parser= new workflowInfoIm(con);
 			Set<String> BlockIds=blockInfo.keySet();
 			Iterator <String> ids=BlockIds.iterator();
