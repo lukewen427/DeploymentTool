@@ -112,6 +112,9 @@ public class prepareDeployment {
 		  return avaClouds;
 	  }
 	
+	  public HashMap<String,ArrayList<String>> getBlockInfo(){
+		  return blockInfo;
+	  }
 	  void setRootNodes(){
 		  for(int a=0;a<workflow.length;a++){
 			  boolean isRoot=true;

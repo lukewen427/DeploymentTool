@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
 
+import uk.ac.ncl.cs.esc.cloudchangehandle.costNewClouds;
 import uk.ac.ncl.cs.esc.newpartitiontool.prepareDeployment.workflowInfo;
 import uk.ac.ncl.cs.esc.read.Block;
 
@@ -48,7 +49,11 @@ public class workflowDeployment implements Runnable {
 			while(!runningPartitions.isEmpty() && (killThread==false)){
 				if(isnewCloud()){
 					// this is for calculate the cost of the new clouds. if cheaper, shift to new clouds.
-					
+					costNewClouds c=new costNewClouds(workflowinfo.getAvaClouds(),avaClouds,unproPartition,deploy,workflowinfo);
+					if(c.needChange()){
+						stopWorkers();
+						this.worklfowStatues="cloudChange";
+					}
 				}else{
 					
 				}
@@ -90,7 +95,7 @@ public class workflowDeployment implements Runnable {
 				
 			}else{
 				HashMap<String,String> newPartition=converse(partition);
-				runningPartition excu=new runningPartition(cloudName,newPartition,  connections, node);
+				runningPartition excu=new runningPartition(cloudName,newPartition, connections, node);
 				Thread t= new Thread(excu);
 				t.setName(String.valueOf(node));
 				t.start();
