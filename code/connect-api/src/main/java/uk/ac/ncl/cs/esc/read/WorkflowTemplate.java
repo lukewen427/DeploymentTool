@@ -14,6 +14,9 @@ public interface WorkflowTemplate {
     public int[] getCloud();
 
     public int[][] getSsecurity();
-
+    
+    public double[][] getStorageTime();
+    
+    public double[] getStorageCost();
 
 }

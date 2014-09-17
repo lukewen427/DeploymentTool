@@ -53,10 +53,12 @@ public class workflowDeployment implements Runnable {
 					if(c.needChange()){
 						stopWorkers();
 						this.worklfowStatues="cloudChange";
+					//	int[][] deployment=c.getDeployment();
 					}
 				}else{
 					
 				}
+				
 				Iterator<runningPartition> keys=runningPartitions.keySet().iterator();
 				while(keys.hasNext()){
 					runningPartition excu=keys.next();
@@ -91,16 +93,24 @@ public class workflowDeployment implements Runnable {
 			ArrayList<Object> partition=partitionGraph.get(node);
 			int cloud=(int) partition.get(0);
 			String cloudName=avaClouds.get(cloud);
-			if(exceutedNode.contains(node)){
-				
+			LinkedList<String> currentCloud=workflowinfo.getAvaClouds();
+			if(cloudName.equals(currentCloud.get(cloud))){
+				if(exceutedNode.contains(node)){
+					
+				}else{
+					HashMap<String,String> newPartition=converse(partition);
+					runningPartition excu=new runningPartition(cloudName,newPartition, connections, node);
+					Thread t= new Thread(excu);
+					t.setName(String.valueOf(node));
+					t.start();
+					addNewPartition(excu,t);
+				}
 			}else{
-				HashMap<String,String> newPartition=converse(partition);
-				runningPartition excu=new runningPartition(cloudName,newPartition, connections, node);
-				Thread t= new Thread(excu);
-				t.setName(String.valueOf(node));
-				t.start();
-				addNewPartition(excu,t);
+				costNewClouds c=new costNewClouds(avaClouds,unproPartition,deploy,workflowinfo);
+				stopWorkers();
+				this.worklfowStatues="cloudChange";
 			}
+	
 		}
 		
 	}

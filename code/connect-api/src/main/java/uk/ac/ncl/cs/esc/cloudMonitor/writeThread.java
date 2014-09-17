@@ -15,7 +15,7 @@ public class writeThread extends Thread {
 		}
 		
 		write w=new write();
-		w.writeFile("cloud1,cloud2,cloud3");
+		w.writeFile("cloud1,cloud2");
 		try {
 			Thread.sleep(5000);
 		} catch (InterruptedException e) {
@@ -23,6 +23,6 @@ public class writeThread extends Thread {
 			e.printStackTrace();
 		}
 		w=new write();
-		w.writeFile("cloud1,cloud3");
+		w.writeFile("cloud1,cloud2");
 	}
 }

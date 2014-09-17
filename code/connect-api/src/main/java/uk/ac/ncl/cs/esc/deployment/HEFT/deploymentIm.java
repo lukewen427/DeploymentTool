@@ -46,7 +46,7 @@ public class deploymentIm implements deployment {
 		return deployOrder;
 	}
 	
-	
+
 	
 	void setBlockSet(){
 		this.blockSet=workflowinfo.getBlockSet();
@@ -57,7 +57,7 @@ public class deploymentIm implements deployment {
 	
 	private void setLinks(PartitionGraph getGraph){
 		this.deploylinks=getGraph.getLinks(pLinks, partitionGraph, blockSet);
-	//	System.out.println(deploylinks);
+		System.out.println(deploylinks);
 		
 	}
 	void setRoot(PartitionGraph getGraph){

@@ -26,7 +26,7 @@ public class prepareDeployment {
 												HashMap<String,ArrayList<String>> blockInfo,cloudMonitorIm cm){
 	this.workflowinfo= new workflowInfo(workflowId,connections,blockInfo,cm);
 	 try {
-	//	new operating(workflowinfo);
+		new operating(workflowinfo);
 	} catch (Exception e) {
 
 		e.printStackTrace();
@@ -45,10 +45,10 @@ public class prepareDeployment {
 	    double workflow[][];
 	    BlockSet blockSet;
 	    LinkedList<String> avaClouds;
-	    
+	    cloudMonitorIm cm;
 	    public workflowInfo(String workflowId, ArrayList<ArrayList<String>> connections,
 				HashMap<String,ArrayList<String>> blockInfo,cloudMonitorIm cm){
-	    	
+	    	this.cm=cm;
 	    	setWorkflowId(workflowId);
 	    	setConnections(connections);
 	    	setBlockInfo(blockInfo);
@@ -59,7 +59,7 @@ public class prepareDeployment {
 	    	setWorkflow(read.getWorkflow());
 	    	setRootNodes();
 	    	setLeafNodes();
-	    
+	    	
 	    	try {
 	    		setBlockSet();
 			} catch (Exception e) {
@@ -68,6 +68,8 @@ public class prepareDeployment {
 			}
 	    	
 	    }
+	    
+	   
 	void setAvaClouds(LinkedList<String> avaClouds){
 		this.avaClouds=avaClouds;
 	}
@@ -110,6 +112,10 @@ public class prepareDeployment {
 	  
 	  public LinkedList<String> getAvaClouds(){
 		  return avaClouds;
+	  }
+	  
+	  public cloudMonitorIm getCloudinfo(){
+		  return cm;
 	  }
 	
 	  public HashMap<String,ArrayList<String>> getBlockInfo(){

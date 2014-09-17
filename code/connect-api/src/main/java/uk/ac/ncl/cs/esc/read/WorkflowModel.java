@@ -9,7 +9,8 @@ package uk.ac.ncl.cs.esc.read;
 	    double [][] cpucost;
 	    int [] cloud;
 	    int [][] ssecurity;
-	    
+	    double [][] StorageTime;
+	    double [] StorageCost;
 	    void setWorkflow(double[][] workflow) {
 	        this.workflow = workflow;
 	    }
@@ -32,6 +33,13 @@ package uk.ac.ncl.cs.esc.read;
 
 	    void setSsecurity(int[][] ssecurity) {
 	        this.ssecurity = ssecurity;
+	    }
+	    
+	    void setStorageTime(double [][] StorageTime){
+	    	this.StorageTime=StorageTime;
+	    }
+	    void setStorageCost(double [] StorageCost){
+	    	this.StorageCost=StorageCost;
 	    }
 	    
 	public double[][] getWorkflow() {
@@ -62,6 +70,17 @@ package uk.ac.ncl.cs.esc.read;
 	public int[][] getSsecurity() {
 		// TODO Auto-generated method stub
 		return ssecurity;
+	}
+	
+	public double[][] getStorageTime() {
+		// TODO Auto-generated method stub
+		
+		return this.StorageTime;
+	}
+	@Override
+	public double[] getStorageCost() {
+		// TODO Auto-generated method stub
+		return this.StorageCost;
 	}
 
 }

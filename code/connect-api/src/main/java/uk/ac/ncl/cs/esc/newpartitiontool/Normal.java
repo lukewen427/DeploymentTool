@@ -157,7 +157,7 @@ public class Normal {
                 list.add(i);
             }
         }
-     //   System.out.println("sp:"+sortedPlatform);
+   //     System.out.println("sp:"+sortedPlatform);
         //
 
         //for each service get all possible deployment

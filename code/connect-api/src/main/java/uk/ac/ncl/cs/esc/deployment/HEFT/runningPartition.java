@@ -35,17 +35,24 @@ public class runningPartition implements Runnable {
 		// TODO Auto-generated method stub
 		if(kill==false){
 			String partitionName="Partition"+partitionid;
+			System.out.println("deploying partition"+partitionName);
+			System.out.println("Cloud Name "+cloudName);
 			HashMap<String,ByteArrayOutputStream> results=dataStorage.getData();
 		    try {
 		    	 ArrayList<String> heads=getHead();
 		    	 staute="running";
-				 newresults=dep.createSCWorkflow(cloudName, partitionName, partition, heads, results, connections);
-				 while(newresults.isEmpty()){
-					 try {
-			    		 Thread.sleep(500);
-			    	 } catch (Exception e){}
-				}
+	//			 newresults=dep.createSCWorkflow(cloudName, partitionName, partition, heads, results, connections);
+	//			 while(newresults.isEmpty()){
+	//				 try {
+	//		    		 Thread.sleep(500);
+	//		    	 } catch (Exception e){}
+	//			}
 				
+		    	 if(cloudName.equals("cloud1")){
+		    		 try {
+		    				Thread.sleep(6000);
+		    			 } catch (Exception e){}
+		    	 }
 				staute="finish";
 				 
 			} catch (Exception e) {
@@ -56,7 +63,7 @@ public class runningPartition implements Runnable {
 		    
 		    if(staute.equals("finish")){
 				System.out.println("Start writting results");
-				 resultsStoring(newresults);
+	//			 resultsStoring(newresults);
 			 }
 		}
  

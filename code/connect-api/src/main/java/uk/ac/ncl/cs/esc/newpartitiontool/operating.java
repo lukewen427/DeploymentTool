@@ -29,21 +29,21 @@ public class operating {
     	setDeploy(deploy,workflowinfo);
     	deploy.createpartitionGraph();
 		deploy.createDeployGraph();
-		LinkedList<ArrayList<Integer>> deployOrder=deploy.getOrder();
+	//	LinkedList<ArrayList<Integer>> deployOrder=deploy.getOrder();
 	//	System.out.println(deployOrder);
 		ArrayList<ArrayList<String>> connections=workflowinfo.getConnections();
-		LinkedList<String> avaClouds=workflowinfo.getAvaClouds();
+	//	LinkedList<String> avaClouds=workflowinfo.getAvaClouds();
 		workflowDeployment escDe=new workflowDeployment(deploy,connections,workflowinfo);
 		Thread t= new Thread(escDe);
 		t.start();
-		while(t.isAlive()){
+		/*while(t.isAlive()){
 			Thread.sleep(1000);
 		}
 		if(escDe.getWorkflowStatue().equals("fail") ||escDe.getWorkflowStatue().equals("cloudChange")){
 			
 		}else{
 			System.out.println("workflow is completely executed");
-		}
+		}*/
 	}
 	
 	private void setDeploy(deploymentIm deploy,workflowInfo workflowinfo){

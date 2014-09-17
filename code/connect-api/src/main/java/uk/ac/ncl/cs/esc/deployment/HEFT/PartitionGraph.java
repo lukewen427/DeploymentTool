@@ -21,6 +21,7 @@ public class PartitionGraph {
 			ArrayList<Object>partition=(ArrayList<Object>) partitions.get(a);
 			partitionGraph.put(a, partition);
 		}
+	//	System.out.println(partitionGraph);
 		return partitionGraph;
 	}
 	

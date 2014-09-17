@@ -3,6 +3,7 @@ package uk.ac.ncl.cs.esc.cloudchangehandle;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Set;
 
 import uk.ac.ncl.cs.esc.deployment.HEFT.deploymentIm;
@@ -19,17 +20,29 @@ public class unpWorkflow {
 	workflowInfo workflowinfo;
 	HashMap<String,ArrayList<String>> unprocessblocks= new HashMap<String,ArrayList<String>>();
 	ArrayList<ArrayList<String>> unpconnections=new ArrayList<ArrayList<String>>();
-	public unpWorkflow(Set<Integer> unpPartition,deploymentIm deploy,workflowInfo workflowinfo){
+	ArrayList<Object> partitionLinks;
+	LinkedList<String>oldCloud;
+	// first place is the source block cloud, second place is the link
+	ArrayList<Object>inputLinks=new ArrayList<Object>();
+	public unpWorkflow(Set<Integer> unpPartition,deploymentIm deploy,workflowInfo workflowinfo,LinkedList<String>oldCloud){
 		this.unpPartition=unpPartition;
 		this.deploy=deploy;
 		this.workflowinfo=workflowinfo;
+		this.oldCloud=oldCloud;
 		setBlockInfo();
 		setpartitionGraph();
 		setConnection();
+		setpartitionLinks();
 		unprocessBlocks();
 		unprocessConnects();
+		inputLinks();
 	}
 	
+	 void setpartitionLinks() {
+		// TODO Auto-generated method stub
+		this.partitionLinks=deploy.getDeployLink();
+	}
+
 	void setConnection(){
 		this.connections=workflowinfo.getConnections();
 	}
@@ -47,12 +60,33 @@ public class unpWorkflow {
 	public ArrayList<ArrayList<String>> getunprocessConnections(){
 		return unpconnections;
 	}
+	public ArrayList<Object> getInputlinks(){
+		return inputLinks;
+	}
 	
 	private void unprocessBlocks(){
 		Iterator<Integer> unpp=unpPartition.iterator();
 		while(unpp.hasNext()){
 			ArrayList<Object> partition=partitionGraph.get(unpp.next());
 			addBlocks(partition);
+		}
+	}
+	
+	private void inputLinks(){
+		for(int a=0;a<partitionLinks.size();a++){
+			ArrayList<Object> link=(ArrayList<Object>) partitionLinks.get(a);
+			ArrayList<Integer> plink=(ArrayList<Integer>) link.get(0);
+			ArrayList<String> blink=(ArrayList<String>) link.get(1);
+			int sp=plink.get(0);
+			int dp=plink.get(1);
+			if(!unpPartition.contains(sp) && unpPartition.contains(dp)){
+				ArrayList<Object> temp=new ArrayList<Object>();
+				ArrayList<Object> partition=partitionGraph.get(sp);
+				String cloudName=oldCloud.get((int) partition.get(0));
+				temp.add(cloudName);
+				temp.add(blink);
+				inputLinks.add(temp.clone());
+			}
 		}
 	}
 	
