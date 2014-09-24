@@ -142,8 +142,7 @@ public class NCF {
 				   				}
 				   		
 				           }
-	
-   	      	 }
+   	      	     }
    	 }
    	 
    	 this.total=theCost(root,0,new ArrayList<Integer>());
@@ -521,15 +520,21 @@ public class NCF {
     	double sum=0;
     	  double computCost=cpucost[node][cloud];
           sum+=computCost;
-          for(int a=0;a<parent.size();a++){
-              int singleNode=parent.get(a);
-              int parentCloud= isoccupied(singleNode);
-              if(parentCloud==-1){
-                  return -1;
-              }else{
-                  sum+=communicationCost(singleNode,node,parentCloud,cloud);
+          if(parent.isEmpty()){
+        	  
+          }else{
+        	  for(int a=0;a<parent.size();a++){
+                  int singleNode=parent.get(a);
+                  int parentCloud= isoccupied(singleNode);
+                  if(parentCloud==-1){
+                      return -1;
+                  }else{
+                      sum+=communicationCost(singleNode,node,parentCloud,cloud);
+                      sum+=storageCost(singleNode,node,parentCloud,cloud);
+                  }
               }
           }
+         
           
     	return sum;
     }

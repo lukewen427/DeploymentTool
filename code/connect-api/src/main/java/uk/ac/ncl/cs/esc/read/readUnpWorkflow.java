@@ -8,6 +8,7 @@ import java.util.LinkedList;
 import java.util.Set;
 
 import uk.ac.ncl.cs.esc.cloudMonitor.CloudPool.Clouds;
+import uk.ac.ncl.cs.esc.newpartitiontool.DNCF;
 import uk.ac.ncl.cs.esc.newpartitiontool.NCF;
 
 import com.google.common.collect.HashBiMap;
@@ -74,9 +75,12 @@ public class readUnpWorkflow {
 		wm.setCpucost(cpucost);
 		wm.setDataSecurity(dataSecurity);
 		
-		NCF n5= new NCF(wm); 
-		this.deployment=n5.NCFAlgorithm();
-		this.totalCost=n5.getTotalCost();
+		DNCF dn=new DNCF(wm,blockInputs);
+		this.deployment=dn.DyNCF();
+		this.totalCost=dn.getTotalCost();
+	//	NCF n5= new NCF(wm); 
+	//	this.deployment=n5.NCFAlgorithm();
+	//	this.totalCost=n5.getTotalCost();
 	}
 	
 	void creatWorkflow(){

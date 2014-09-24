@@ -8,48 +8,47 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Set;
 
-import uk.ac.ncl.cs.esc.cloudMonitor.cloudMonitorIm;
 import uk.ac.ncl.cs.esc.cloudchangehandle.costNewClouds;
-import uk.ac.ncl.cs.esc.cloudchangehandle.costNewClouds.deployInfo;
 import uk.ac.ncl.cs.esc.cloudchangehandle.handleCloudChange;
-import uk.ac.ncl.cs.esc.newpartitiontool.prepareDeployment.workflowInfo;
+import uk.ac.ncl.cs.esc.cloudchangehandle.costNewClouds.deployInfo;
+import uk.ac.ncl.cs.esc.cloudchangehandle.handleCloudChange.unpworkflowInfo;
 import uk.ac.ncl.cs.esc.read.Block;
-import uk.ac.ncl.cs.esc.read.BlockSet;
 
-public class workflowDeployment implements Runnable {
+public class newWorkflowDeployment implements Runnable {
+
+	unpworkflowInfo upw;
+	newDeploymentIm deploy;
 	LinkedList<ArrayList<Integer>> deployOrder;
 	HashMap<Integer,ArrayList<Object>>partitionGraph;
-	deploymentIm deploy;
 	Hashtable<runningPartition,Thread> runningPartitions=new Hashtable<runningPartition,Thread>();
 	ArrayList<Integer> exceutedNode=new ArrayList<Integer>();
 	ArrayList<ArrayList<String>> connections;
 	LinkedList<String> avaClouds;
+	ArrayList<ArrayList<String>>dpconnections;
 	Set<Integer> unproPartition=new HashSet<Integer>();
 	boolean killThread=false;
-	workflowInfo workflowinfo;
+//	workflowInfo workflowinfo;
 	String worklfowStatues;
-	public workflowDeployment (deploymentIm deploy,	ArrayList<ArrayList<String>> connections,workflowInfo workflowinfo){
-		this.workflowinfo=workflowinfo;
+	ArrayList<Object> inputLinks;
+	public newWorkflowDeployment(newDeploymentIm deploy,unpworkflowInfo upw){
+		this.upw=upw;
 		this.deploy=deploy;
-		this.connections=connections;
-		this.avaClouds =workflowinfo.getAvaClouds();
+		this.connections=upw.getConnections();
+		this.avaClouds=upw.getAvaClouds();
+		this.inputLinks=upw.getInput();
+		addConnections();
 		this.worklfowStatues="running";
-		setDeployOrder();
-		setPartitionGraph();
-		initUNPParition();
-	//	boolean killThread=false;
+		
 	}
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
-		
-		
 		for(int i=0;i<deployOrder.size();i++){
 			if(killThread){
 				break;
 			}
 			ArrayList<Integer> step=deployOrder.get(i);
-				Deployment(step);	
+			Deployment(step);
 			while(!runningPartitions.isEmpty() && (killThread==false)){
 				if(isnewCloud()){
 					// this is for calculate the cost of the new clouds. if cheaper, shift to new clouds.
@@ -90,21 +89,21 @@ public class workflowDeployment implements Runnable {
 				}
 			}
 		}
-		
 		this.worklfowStatues="finish";
 	}
+	
 	private void Deployment(ArrayList<Integer> step) {
 		for(int node:step){
 			ArrayList<Object> partition=partitionGraph.get(node);
 			int cloud=(int) partition.get(0);
 			String cloudName=avaClouds.get(cloud);
-			LinkedList<String> currentCloud=workflowinfo.getAvaClouds();
+			LinkedList<String> currentCloud=upw.getAvaClouds();
 			if(cloudName.equals(currentCloud.get(cloud))){
 				if(exceutedNode.contains(node)){
 					
 				}else{
 					HashMap<String,String> newPartition=converse(partition);
-					runningPartition excu=new runningPartition(cloudName,newPartition, connections, node);
+					runningPartition excu=new runningPartition(cloudName,newPartition, dpconnections, node);
 					Thread t= new Thread(excu);
 					t.setName(String.valueOf(node));
 					t.start();
@@ -121,7 +120,7 @@ public class workflowDeployment implements Runnable {
 	}
 	
 	private boolean isnewCloud(){
-		if(avaClouds.size()<workflowinfo.getAvaClouds().size()){
+		if(avaClouds.size()<upw.getAvaClouds().size()){
 			return true;
 		}
 		return false;
@@ -136,16 +135,6 @@ public class workflowDeployment implements Runnable {
 		}
 		return newPartition;
 	}
-	void setDeployOrder(){
-		 this.deployOrder=deploy.getOrder();
-	 }
-	void setPartitionGraph(){
-		 this.partitionGraph=deploy.getPartitionGraph();
-	 }
-	void initUNPParition(){
-		this.unproPartition=partitionGraph.keySet();
-	}
-	
 	public synchronized void addNewPartition(runningPartition excu,Thread t){
 		
 		 runningPartitions.put(excu, t);
@@ -177,5 +166,13 @@ public class workflowDeployment implements Runnable {
 			}
 		}
 		stopThread();
+	}
+	
+	void addConnections(){
+		dpconnections=(ArrayList<ArrayList<String>>) connections.clone();
+		for(int a=0;a<inputLinks.size();a++){
+			ArrayList<String> link=(ArrayList<String>) ((ArrayList<Object>)inputLinks.get(a)).get(1);
+			dpconnections.add(link);
+		}
 	}
 }

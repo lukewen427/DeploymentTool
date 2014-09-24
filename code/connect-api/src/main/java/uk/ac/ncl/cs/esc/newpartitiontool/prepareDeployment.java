@@ -121,6 +121,9 @@ public class prepareDeployment {
 	  public HashMap<String,ArrayList<String>> getBlockInfo(){
 		  return blockInfo;
 	  }
+	  public String getWorkflowId(){
+		  return workflowId;
+	  }
 	  void setRootNodes(){
 		  for(int a=0;a<workflow.length;a++){
 			  boolean isRoot=true;

@@ -17,12 +17,14 @@ public class costCalculator {
     int [][] deployment;
     HashBiMap< String,Integer> biMap;
     ArrayList<Object> inputLinks;
+    double unpworkflow[][];
 	public costCalculator(LinkedList<String> clouds,ArrayList<ArrayList<String>> connections,
 								HashMap<String,ArrayList<String>> blockInfo,ArrayList<Object> inputLinks){
 		this.clouds=clouds;
 		this.connections=connections;
 		this.blockInfo=blockInfo;
 		this.inputLinks=inputLinks;
+		loadUnpWorkflow();
 	}
 	
 	public HashBiMap< String,Integer> getMap(){
@@ -36,11 +38,15 @@ public class costCalculator {
 	public double getCost(){
 		return totalCost;
 	}
+	public double[][] getWorkflow(){
+		return unpworkflow;
+	}
 	
 	void loadUnpWorkflow(){
 		readUnpWorkflow ruw=new readUnpWorkflow(connections,blockInfo,clouds,inputLinks);
 		this.totalCost=ruw.getTotalCost();
 		this.biMap=ruw.getMap();
 		this.deployment=ruw.getDeployment();
+		this.unpworkflow=ruw.getWorkflow();
 	}
 }

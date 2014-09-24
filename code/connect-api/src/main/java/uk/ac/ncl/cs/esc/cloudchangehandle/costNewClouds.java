@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Set;
 
+import com.google.common.collect.HashBiMap;
+
 import uk.ac.ncl.cs.esc.deployment.HEFT.deploymentIm;
 import uk.ac.ncl.cs.esc.newpartitiontool.prepareDeployment.workflowInfo;
 
@@ -21,6 +23,8 @@ public class costNewClouds {
 	int [][]  deployment;
 	boolean needChange=false;
 	ArrayList<Object> inputLinks;
+	HashBiMap< String,Integer> biMap;
+	double [][] unpworkflow;
 	// this is for cloud fail
 	
 	public costNewClouds(LinkedList<String>oldCloud, Set<Integer> unpPartition,deploymentIm deploy,workflowInfo workflowinfo){
@@ -63,10 +67,27 @@ public class costNewClouds {
 		this.inputLinks=unpw.getInputlinks();
 	}
 	
+	public deployInfo getDeployInfo(){
+		
+		this.deployment=getDeployment();
+		deployInfo de=new deployInfo(biMap,deployment,inputLinks,connections,blockInfo,unpworkflow);
+		return de;
+	}
+	
+	/*public HashMap<String,ArrayList<String>> getBlockInfo(){
+		return blockInfo;
+	}
+	public ArrayList<ArrayList<String>> getConnection(){
+		return connections;
+	}
+	public ArrayList<Object> getInputs(){
+		return inputLinks;
+	}*/ 
 	public  int [][] getDeployment(){
 		if(oldClouds==null){
 			costCalculator current= new costCalculator (avaClouds, connections, blockInfo,inputLinks);
 			this.deployment=current.getDeployment();
+			this.unpworkflow=current.getWorkflow();
 		}
 		return deployment;
 	}
@@ -79,9 +100,48 @@ public class costNewClouds {
 			if(old.getCost()>current.getCost()){
 				needChange=true;
 				this.deployment=current.getDeployment();
+				this.unpworkflow=current.getWorkflow();
 			}
 		}
 	}
 	
+	public static class deployInfo{
+		HashBiMap< String,Integer> biMap;
+		int [][] deployment;
+		ArrayList<Object> inputLinks;
+		ArrayList<ArrayList<String>> connection;
+		HashMap<String,ArrayList<String>>blockInfo;
+		double [][] unpworkflow;
+		public deployInfo (HashBiMap< String,Integer> biMap, int [][] deployment,ArrayList<Object> inputLinks,
+				ArrayList<ArrayList<String>> connection,HashMap<String,ArrayList<String>>blockInfo,double [][] unpworkflow){
+			this.biMap=biMap;
+			this.deployment=deployment;
+			this.deployment=deployment;
+			this.inputLinks=inputLinks;
+			this.connection=connection;
+			this.blockInfo=blockInfo;
+			this.unpworkflow=unpworkflow;
+		}
+		
+		public HashBiMap< String,Integer> getMap(){
+			return biMap;
+		}
+		public int[][] getDeployment(){
+			return deployment;
+		}
+		public ArrayList<Object> getInputLinks(){
+			return inputLinks;
+		}
+		public ArrayList<ArrayList<String>> getConnection(){
+			return connection;
+		}
+		public HashMap<String,ArrayList<String>> getBlockInfo(){
+			return blockInfo;
+		}
+		public double[][] getWorkflow(){
+			return unpworkflow;
+		}
+		
+	}
 	
 }

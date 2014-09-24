@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import com.google.common.collect.HashBiMap;
 
+import uk.ac.ncl.cs.esc.cloudchangehandle.handleCloudChange.unpworkflowInfo;
 import uk.ac.ncl.cs.esc.newpartitiontool.prepareDeployment.workflowInfo;
 import uk.ac.ncl.cs.esc.read.Block;
 import uk.ac.ncl.cs.esc.read.BlockSet;
@@ -12,19 +13,29 @@ import uk.ac.ncl.cs.esc.read.BlockSet;
 public class partitionWorkflowImp implements partitionWorkflow  {
 	
  private final HashBiMap<String,Integer> biMap;
-	private final workflowInfo workflowinfo;
+//	private final workflowInfo workflowinfo;
 	private final ArrayList<String> root;
 	private final BlockSet blockSet;
 	private final int[][] deployment;
 	private final ArrayList<ArrayList<String>> connections;
 	private ArrayList<Object> links =new ArrayList<Object>();
+	
 	public partitionWorkflowImp(workflowInfo workflowinfo){
 		this.biMap=workflowinfo.getMap();
-		this.workflowinfo=workflowinfo;
+	//	this.workflowinfo=workflowinfo;
 		this.root=workflowinfo.getRootNodes();
 		this.blockSet=workflowinfo.getBlockSet();
 		this.deployment=workflowinfo.getDeployment();
 		this.connections=workflowinfo.getConnections();
+	}
+	
+	public partitionWorkflowImp(unpworkflowInfo upw){
+		this.biMap=upw.getMap();
+		this.root=upw.getRootNodes();
+		this.blockSet=upw.getBlockSet();
+		this.deployment=upw.getDeployment();
+		this.connections=upw.getConnections();
+		
 	}
 	public HashMap<Block,Integer> mappingCloud(){
 		HashMap<Block,Integer>option=new HashMap<Block,Integer>();

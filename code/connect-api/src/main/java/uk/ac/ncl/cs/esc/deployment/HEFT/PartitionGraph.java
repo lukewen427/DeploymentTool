@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import uk.ac.ncl.cs.esc.cloudchangehandle.handleCloudChange.unpworkflowInfo;
 import uk.ac.ncl.cs.esc.newpartitiontool.prepareDeployment.workflowInfo;
 import uk.ac.ncl.cs.esc.read.Block;
 import uk.ac.ncl.cs.esc.read.BlockSet;
@@ -93,9 +94,51 @@ public class PartitionGraph {
 		return rootPartition;
 	}
 	
+	public ArrayList<Integer>  getRootPartition(HashMap<Integer,ArrayList<Object>>partitionGraph,unpworkflowInfo upw,BlockSet blockSet){
+		ArrayList<Integer> rootPartition=new ArrayList<Integer>();
+		ArrayList<String> root=upw.getRootNodes();
+		for(String node:root){
+			Block rootNode=blockSet.getBlock(node);
+			Iterator<Integer> keys=partitionGraph.keySet().iterator();
+			while(keys.hasNext()){
+				int partitionName=keys.next();
+				ArrayList<Object> partition=partitionGraph.get(partitionName);
+				if(partition.contains(rootNode)){
+					if(!rootPartition.contains(partitionName)){
+					 rootPartition.add(partitionName);
+					}
+				}
+			}
+		}
+		
+		
+		return rootPartition;
+	}
+	
 	public ArrayList<Integer> getLeafPartition(HashMap<Integer,ArrayList<Object>>partitionGraph,workflowInfo workflowinfo,BlockSet blockSet){
 		ArrayList<Integer> leafPartition=new ArrayList<Integer>();
 		ArrayList<String> leaf=workflowinfo.getLeafNodes();
+		
+		for(String node:leaf){
+			Block leafNode=blockSet.getBlock(node);
+			Iterator<Integer> keys=partitionGraph.keySet().iterator();
+			while(keys.hasNext()){
+				int partitionName=keys.next();
+				ArrayList<Object> partition=partitionGraph.get(partitionName);
+				if(partition.contains(leafNode)){
+					if(!leafPartition.contains(partitionName)){
+					leafPartition.add(partitionName);
+					}
+				 }
+				}
+			}
+		
+		return leafPartition;
+	}
+	
+	public ArrayList<Integer> getLeafPartition(HashMap<Integer,ArrayList<Object>>partitionGraph,unpworkflowInfo upw,BlockSet blockSet){
+		ArrayList<Integer> leafPartition=new ArrayList<Integer>();
+		ArrayList<String> leaf=upw.getLeafNodes();
 		
 		for(String node:leaf){
 			Block leafNode=blockSet.getBlock(node);
