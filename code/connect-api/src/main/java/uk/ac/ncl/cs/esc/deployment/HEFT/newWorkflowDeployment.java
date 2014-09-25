@@ -12,11 +12,12 @@ import uk.ac.ncl.cs.esc.cloudchangehandle.costNewClouds;
 import uk.ac.ncl.cs.esc.cloudchangehandle.handleCloudChange;
 import uk.ac.ncl.cs.esc.cloudchangehandle.costNewClouds.deployInfo;
 import uk.ac.ncl.cs.esc.cloudchangehandle.handleCloudChange.unpworkflowInfo;
+import uk.ac.ncl.cs.esc.newpartitiontool.prepareDeployment.workflowInfo;
 import uk.ac.ncl.cs.esc.read.Block;
 
 public class newWorkflowDeployment implements Runnable {
 
-	unpworkflowInfo upw;
+	//unpworkflowInfo upw;
 	newDeploymentIm deploy;
 	LinkedList<ArrayList<Integer>> deployOrder;
 	HashMap<Integer,ArrayList<Object>>partitionGraph;
@@ -27,11 +28,11 @@ public class newWorkflowDeployment implements Runnable {
 	ArrayList<ArrayList<String>>dpconnections;
 	Set<Integer> unproPartition=new HashSet<Integer>();
 	boolean killThread=false;
-//	workflowInfo workflowinfo;
+	workflowInfo workflowinfo;
 	String worklfowStatues;
 	ArrayList<Object> inputLinks;
 	public newWorkflowDeployment(newDeploymentIm deploy,unpworkflowInfo upw){
-		this.upw=upw;
+		this.workflowinfo=upw.reCreateWorkflowinfo();
 		this.deploy=deploy;
 		this.connections=upw.getConnections();
 		this.avaClouds=upw.getAvaClouds();
@@ -51,8 +52,9 @@ public class newWorkflowDeployment implements Runnable {
 			Deployment(step);
 			while(!runningPartitions.isEmpty() && (killThread==false)){
 				if(isnewCloud()){
+					deploymentIm dep=deploy.getDeploymentIm();
 					// this is for calculate the cost of the new clouds. if cheaper, shift to new clouds.
-					costNewClouds c=new costNewClouds(workflowinfo.getAvaClouds(),avaClouds,unproPartition,deploy,workflowinfo);
+					costNewClouds c=new costNewClouds(workflowinfo.getAvaClouds(),avaClouds,unproPartition,dep,workflowinfo);
 					if(c.needChange()){
 						stopWorkers();
 						this.worklfowStatues="cloudChange";		
@@ -97,7 +99,7 @@ public class newWorkflowDeployment implements Runnable {
 			ArrayList<Object> partition=partitionGraph.get(node);
 			int cloud=(int) partition.get(0);
 			String cloudName=avaClouds.get(cloud);
-			LinkedList<String> currentCloud=upw.getAvaClouds();
+			LinkedList<String> currentCloud=workflowinfo.getAvaClouds();
 			if(cloudName.equals(currentCloud.get(cloud))){
 				if(exceutedNode.contains(node)){
 					
@@ -110,7 +112,8 @@ public class newWorkflowDeployment implements Runnable {
 					addNewPartition(excu,t);
 				}
 			}else{
-				costNewClouds c=new costNewClouds(avaClouds,unproPartition,deploy,workflowinfo);
+				deploymentIm dep=deploy.getDeploymentIm();
+				costNewClouds c=new costNewClouds(avaClouds,unproPartition,dep,workflowinfo);
 				stopWorkers();
 				this.worklfowStatues="cloudChange";
 			}
@@ -120,7 +123,7 @@ public class newWorkflowDeployment implements Runnable {
 	}
 	
 	private boolean isnewCloud(){
-		if(avaClouds.size()<upw.getAvaClouds().size()){
+		if(avaClouds.size()<workflowinfo.getAvaClouds().size()){
 			return true;
 		}
 		return false;

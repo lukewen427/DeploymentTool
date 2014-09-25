@@ -28,7 +28,7 @@ public class handleCloudChange {
 		
 		 ArrayList<String> root=new ArrayList<String>();
 		  ArrayList<String> leaf=new ArrayList<String>();
-	//	  String workflowId;
+	   // 	String workflowId;
 			ArrayList<ArrayList<String>> connections;
 			HashMap<String,ArrayList<String>> blockInfo;
 			int [][] deployment;
@@ -42,8 +42,11 @@ public class handleCloudChange {
 		    BlockSet theBlockSet;
 		 // first place is the source block cloud, second place is the link
 		    ArrayList<Object> inputLinks;
+		    workflowInfo workflowinfo;
+		   
 		    public unpworkflowInfo(deployInfo deinfo,workflowInfo workflowinfo){
-		//    	this.workflowId=workflowId;
+		    	
+		    	this.workflowinfo=workflowinfo;
 		    	this.cm=workflowinfo.getCloudinfo();
 		    	this.deinfo=deinfo;
 		    	this.theBlockSet=workflowinfo.getBlockSet();
@@ -53,7 +56,7 @@ public class handleCloudChange {
 		//    	setWorkflowId(workflowId);
 		    	setConnections(deinfo.getConnection());
 		        setMaps(deinfo.getMap());
-		        setDeployment(deinfo.deployment);
+		        setDeployment(deinfo.getDeployment());
 		        setBlockInfo(deinfo.getBlockInfo());
 		        setBlockSet();
 		        setLeaf();
@@ -100,6 +103,12 @@ public class handleCloudChange {
 				}
 			  public ArrayList<Object> getInput(){
 				   	return inputLinks;
+			  }
+			  
+			  public workflowInfo reCreateWorkflowinfo(){
+				  
+				  workflowInfo newInfo=new workflowInfo(deinfo,workflowinfo);
+				  return newInfo;
 			  }
 			  
 			  void setAvaClouds(LinkedList<String> avaClouds){

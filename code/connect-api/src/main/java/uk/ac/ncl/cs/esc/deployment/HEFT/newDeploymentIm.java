@@ -91,5 +91,13 @@ public class newDeploymentIm implements deployment{
 		
 		return deployOrder;
 	}
+    
+    public deploymentIm getDeploymentIm(){
+    	deploymentIm deIm=new deploymentIm();
+    	deIm.setPartitionGraph(partitionGraph);
+    	deIm.setDeployLink(deploylinks);
+    	deIm.setOrder(deployOrder);
+    	return deIm;
+    }
 
 }

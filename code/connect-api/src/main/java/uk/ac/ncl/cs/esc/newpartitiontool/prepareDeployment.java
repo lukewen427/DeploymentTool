@@ -10,6 +10,7 @@ import java.util.Set;
 import com.google.common.collect.HashBiMap;
 
 import uk.ac.ncl.cs.esc.cloudMonitor.cloudMonitorIm;
+import uk.ac.ncl.cs.esc.cloudchangehandle.costNewClouds.deployInfo;
 import uk.ac.ncl.cs.esc.connection.cloudConnection;
 import uk.ac.ncl.cs.esc.connection.connection;
 import uk.ac.ncl.cs.esc.read.Block;
@@ -46,6 +47,10 @@ public class prepareDeployment {
 	    BlockSet blockSet;
 	    LinkedList<String> avaClouds;
 	    cloudMonitorIm cm;
+	    
+	    // the variables are for creating workflowinfo from unpworkflowInfo 
+	    workflowInfo workflowinfo;
+	    deployInfo deinfo;
 	    public workflowInfo(String workflowId, ArrayList<ArrayList<String>> connections,
 				HashMap<String,ArrayList<String>> blockInfo,cloudMonitorIm cm){
 	    	this.cm=cm;
@@ -67,6 +72,23 @@ public class prepareDeployment {
 				e.printStackTrace();
 			}
 	    	
+	    }
+	    
+	    public workflowInfo(deployInfo deinfo,workflowInfo workflowinfo){
+	    	this.workflowinfo=workflowinfo;
+	    	this.cm=workflowinfo.getCloudinfo();
+	    	this.deinfo=deinfo;
+	    	BlockSet theBlockSet=workflowinfo.getBlockSet();
+	    //	this.inputLinks=deinfo.getInputLinks();
+	    	setWorkflow(deinfo.getWorkflow());
+	    	setAvaClouds(cm.getAvaClouds());
+	    	setConnections(deinfo.getConnection());
+	        setMaps(deinfo.getMap());
+	        setDeployment(deinfo.getDeployment());
+	        setBlockInfo(deinfo.getBlockInfo());
+	        setBlockSet(theBlockSet);
+	        setRootNodes();
+	        setLeafNodes();
 	    }
 	    
 	   
@@ -121,9 +143,21 @@ public class prepareDeployment {
 	  public HashMap<String,ArrayList<String>> getBlockInfo(){
 		  return blockInfo;
 	  }
-	  public String getWorkflowId(){
-		  return workflowId;
+	  
+	  public ArrayList<String> getRootNodes(){
+		  
+		  return root;
 	  }
+	  
+	  public ArrayList<String> getLeafNodes(){
+		
+		  return leaf;
+	  }
+	  public BlockSet getBlockSet() {
+			
+			return blockSet;
+		}
+	  
 	  void setRootNodes(){
 		  for(int a=0;a<workflow.length;a++){
 			  boolean isRoot=true;
@@ -156,15 +190,7 @@ public class prepareDeployment {
 			  }
 		  }
 	  }
-	  public ArrayList<String> getRootNodes(){
-		  
-		  return root;
-	  }
-	  
-	  public ArrayList<String> getLeafNodes(){
-		
-		  return leaf;
-	  }
+
 	  
 	  void setBlockSet() throws Exception{
 		     Block theblock;
@@ -193,10 +219,22 @@ public class prepareDeployment {
 		   this.blockSet=new BlockSet(theBlockSet);
 			
 	  }
-	    public BlockSet getBlockSet() {
-			
-			return blockSet;
-		}
+	  
+	  void setBlockSet(BlockSet theBlockSet){
+		   Set<Block> blocks=new HashSet<Block>();
+		   Set<String> BlockIds=blockInfo.keySet();
+		   Iterator <String> ids=BlockIds.iterator();
+		   while(ids.hasNext()){
+			   String blockid=ids.next();
+			   Block b=theBlockSet.getBlock(blockid);
+			   if(!blocks.contains(b)){
+				   blocks.add(b);
+			   }
+		   }
+		   
+		  this.blockSet= new BlockSet(blocks);
+	  }
+	    
   }
   
 }
