@@ -37,6 +37,9 @@ public class newWorkflowDeployment implements Runnable {
 		this.connections=upw.getConnections();
 		this.avaClouds=upw.getAvaClouds();
 		this.inputLinks=upw.getInput();
+		setDeployOrder();
+		setPartitionGraph();
+		initUNPParition();
 		addConnections();
 		this.worklfowStatues="running";
 		
@@ -44,6 +47,8 @@ public class newWorkflowDeployment implements Runnable {
 	@Override
 	public void run() {
 		// TODO Auto-generated method stub
+		System.out.println("start new deployment");
+	//	System.out.println(deployOrder);
 		for(int i=0;i<deployOrder.size();i++){
 			if(killThread){
 				break;
@@ -177,5 +182,20 @@ public class newWorkflowDeployment implements Runnable {
 			ArrayList<String> link=(ArrayList<String>) ((ArrayList<Object>)inputLinks.get(a)).get(1);
 			dpconnections.add(link);
 		}
+	}
+	
+	void setDeployOrder(){
+		 this.deployOrder=deploy.getOrder();
+	 }
+	void setPartitionGraph(){
+		 this.partitionGraph=deploy.getPartitionGraph();
+	 }
+	void initUNPParition(){
+		//this.unproPartition=partitionGraph.keySet();
+		Iterator<Integer> keys=partitionGraph.keySet().iterator();
+		while(keys.hasNext()){
+			unproPartition.add(keys.next());
+		}
+	//	System.out.println(partitionGraph);
 	}
 }

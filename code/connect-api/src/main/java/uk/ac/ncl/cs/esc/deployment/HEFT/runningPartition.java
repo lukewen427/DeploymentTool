@@ -47,12 +47,11 @@ public class runningPartition implements Runnable {
 	//		    		 Thread.sleep(500);
 	//		    	 } catch (Exception e){}
 	//			}
-				
-		    	 if(cloudName.equals("cloud1")){
+				 
 		    		 try {
 		    				Thread.sleep(6000);
 		    			 } catch (Exception e){}
-		    	 }
+		    	 
 				staute="finish";
 				 
 			} catch (Exception e) {

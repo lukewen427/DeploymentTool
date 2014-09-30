@@ -70,7 +70,7 @@ public class costNewClouds {
 	public deployInfo getDeployInfo(){
 		
 		this.deployment=getDeployment();
-		deployInfo de=new deployInfo(biMap,deployment,inputLinks,connections,blockInfo,unpworkflow);
+		deployInfo de=new deployInfo( biMap,deployment,inputLinks,connections,blockInfo,unpworkflow);
 		return de;
 	}
 	
@@ -88,6 +88,7 @@ public class costNewClouds {
 			costCalculator current= new costCalculator (avaClouds, connections, blockInfo,inputLinks);
 			this.deployment=current.getDeployment();
 			this.unpworkflow=current.getWorkflow();
+			this.biMap=current.getMap();
 		}
 		return deployment;
 	}
@@ -101,6 +102,7 @@ public class costNewClouds {
 				needChange=true;
 				this.deployment=current.getDeployment();
 				this.unpworkflow=current.getWorkflow();
+				this.biMap=current.getMap();
 			}
 		}
 	}

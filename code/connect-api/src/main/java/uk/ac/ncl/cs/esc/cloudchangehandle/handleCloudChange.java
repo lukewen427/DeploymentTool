@@ -21,6 +21,7 @@ public class handleCloudChange {
 	public handleCloudChange(deployInfo deinfo,workflowInfo workflowinfo){
 		
 		this.upw=new unpworkflowInfo(deinfo,workflowinfo);
+		new newoperating(upw);
 		
 	}
 	
@@ -130,6 +131,7 @@ public class handleCloudChange {
 					  this.deployment=deployment;
 				  }
 				  void setMaps(HashBiMap< String,Integer> biMap){
+				//	  System.out.println(biMap);
 					  this.biMap=biMap;
 				  }
 				  void setBlockSet(){
@@ -167,6 +169,7 @@ public class handleCloudChange {
 						  
 						  if(isleaf){
 							  
+						//	  System.out.println(biMap);
 							  String name=biMap.inverse().get(a);
 							  leaf.add(name);
 						  }

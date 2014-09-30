@@ -56,6 +56,7 @@ public class partitionWorkflowImp implements partitionWorkflow  {
 		ArrayList<Object> partitions=new ArrayList<Object>();
 		
 		ArrayList<String> startNodes=new ArrayList<String>();
+	//	System.out.println(connections);
 		for(String node:root){
 		//	String nodeId=biMap.inverse().get(node);
 			startNodes.add(node);

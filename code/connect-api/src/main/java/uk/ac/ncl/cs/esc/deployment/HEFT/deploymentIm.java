@@ -2,6 +2,7 @@ package uk.ac.ncl.cs.esc.deployment.HEFT;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import uk.ac.ncl.cs.esc.newpartitiontool.prepareDeployment.workflowInfo;
@@ -36,9 +37,13 @@ public class deploymentIm implements deployment {
 	public void createpartitionGraph(){
 		PartitionGraph getGraph=new PartitionGraph();
 		this.partitionGraph=getGraph.createpartitionGraph(partitions);
-		setLinks(getGraph);
-		setRoot(getGraph);
-		setLeaf(getGraph);
+		if(pLinks.isEmpty()){
+			
+		}else{
+			setLinks(getGraph);
+			setRoot(getGraph);
+			setLeaf(getGraph);
+		}
 		
 	}
 	
@@ -77,8 +82,18 @@ public class deploymentIm implements deployment {
 		LinkedList<ArrayList<Integer>> order=new LinkedList<ArrayList<Integer>>();
 		deployGraph getOrder=new deployGraph();
 	//	System.out.println(leaf);
-		getOrder.createOrder(leaf, deploylinks, order, new ArrayList<Integer>((ArrayList<Integer>)leaf.clone()));
-		inverse(order);
+		if(deploylinks.isEmpty()){
+			ArrayList<Integer> temp=new ArrayList<Integer>();
+			Iterator<Integer> keys=partitionGraph.keySet().iterator();
+			while(keys.hasNext()){
+				int p=keys.next();
+				temp.add(p);
+			}
+			order.add((ArrayList<Integer>)temp.clone());
+		}else{
+			getOrder.createOrder(leaf, deploylinks, order, new ArrayList<Integer>((ArrayList<Integer>)leaf.clone()));
+			inverse(order);
+		}
 	}
 	
 	private void inverse(LinkedList<ArrayList<Integer>> order){

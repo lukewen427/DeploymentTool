@@ -36,12 +36,14 @@ public class readUnpWorkflow {
 							  LinkedList<String> clouds,ArrayList<Object> inputLinks){
 		this.connections=connections;
 		this.blockInfo=blockInfo;
+		this.clouds=clouds;
 		this.cloudSet=getClouds();
 		this.inputLinks=inputLinks;
 		initial();
 	}
 	
 	public HashBiMap< String,Integer> getMap(){
+//		System.out.println(biMap);
 		return biMap;
 	}
 	
@@ -78,6 +80,7 @@ public class readUnpWorkflow {
 		DNCF dn=new DNCF(wm,blockInputs);
 		this.deployment=dn.DyNCF();
 		this.totalCost=dn.getTotalCost();
+	//	System.out.println(totalCost);
 	//	NCF n5= new NCF(wm); 
 	//	this.deployment=n5.NCFAlgorithm();
 	//	this.totalCost=n5.getTotalCost();

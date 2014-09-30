@@ -5,6 +5,7 @@ import java.util.HashMap;
 
 import uk.ac.ncl.cs.esc.cloudchangehandle.handleCloudChange.unpworkflowInfo;
 import uk.ac.ncl.cs.esc.deployment.HEFT.newDeploymentIm;
+import uk.ac.ncl.cs.esc.deployment.HEFT.newWorkflowDeployment;
 import uk.ac.ncl.cs.esc.newpartitiontool.partitionWorkflow;
 import uk.ac.ncl.cs.esc.newpartitiontool.partitionWorkflowImp;
 import uk.ac.ncl.cs.esc.read.Block;
@@ -19,10 +20,16 @@ public class newoperating {
 		this.option= partition.mappingCloud();
 		this.partitions=partition.workflowSplit(option);
 		this.links=partition.getLinks();
+		
 		newDeploymentIm deploy=new newDeploymentIm();
     	setDeploy(deploy,upw);
+   // 	System.out.println("ffffff");
     	deploy.createpartitionGraph();
 		deploy.createDeployGraph();
+		
+		newWorkflowDeployment newESCde=new newWorkflowDeployment(deploy, upw);
+		Thread t=new Thread(newESCde);
+		t.start();
 	}
 	private void setDeploy(newDeploymentIm deploy, unpworkflowInfo upw) {
 		// TODO Auto-generated method stub

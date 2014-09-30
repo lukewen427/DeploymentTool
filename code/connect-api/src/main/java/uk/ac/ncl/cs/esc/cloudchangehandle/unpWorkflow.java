@@ -111,7 +111,7 @@ public class unpWorkflow {
 	
 	boolean isContain(ArrayList<String> link){
 		for(ArrayList<String> temp:unpconnections){
-			if((temp.get(0).equals(link.get(0)))|| (temp.get(1).equals(link.get(1)))){
+			if((temp.get(0).equals(link.get(0)))&& (temp.get(1).equals(link.get(1)))){
 				return true;
 			}
 		}

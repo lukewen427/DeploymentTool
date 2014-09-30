@@ -2,6 +2,7 @@ package uk.ac.ncl.cs.esc.deployment.HEFT;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import uk.ac.ncl.cs.esc.cloudchangehandle.handleCloudChange.unpworkflowInfo;
@@ -42,15 +43,19 @@ public class newDeploymentIm implements deployment{
 	public void createpartitionGraph(){
 		PartitionGraph getGraph=new PartitionGraph();
 		this.partitionGraph=getGraph.createpartitionGraph(partitions);
-		setLinks(getGraph);
-		setRoot(getGraph);
-		setLeaf(getGraph);
+		if(pLinks.isEmpty()){
+			
+		}else{
+			setLinks(getGraph);
+			setRoot(getGraph);
+			setLeaf(getGraph);
+		}
 		
 	}
 	
 	private void setLinks(PartitionGraph getGraph){
 		this.deploylinks=getGraph.getLinks(pLinks, partitionGraph, blockSet);
-		System.out.println(deploylinks);
+	//	System.out.println(deploylinks);
 		
 	}
 	void setRoot(PartitionGraph getGraph){
@@ -66,9 +71,21 @@ public class newDeploymentIm implements deployment{
 	public void createDeployGraph(){
 		LinkedList<ArrayList<Integer>> order=new LinkedList<ArrayList<Integer>>();
 		deployGraph getOrder=new deployGraph();
-	//	System.out.println(leaf);
-		getOrder.createOrder(leaf, deploylinks, order, new ArrayList<Integer>((ArrayList<Integer>)leaf.clone()));
-		inverse(order);
+		//System.out.println(deploylinks);
+		if(deploylinks==null){
+			ArrayList<Integer> temp=new ArrayList<Integer>();
+			Iterator<Integer> keys=partitionGraph.keySet().iterator();
+			while(keys.hasNext()){
+				int p=keys.next();
+				temp.add(p);
+			}
+			deployOrder.add((ArrayList<Integer>)temp.clone());
+		//	System.out.println(order);
+		}else{
+			getOrder.createOrder(leaf, deploylinks, order, new ArrayList<Integer>((ArrayList<Integer>)leaf.clone()));
+			inverse(order);
+		}
+		
 	}
 
 	private void inverse(LinkedList<ArrayList<Integer>> order){

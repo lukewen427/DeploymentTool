@@ -32,11 +32,11 @@ public class workflowDeployment implements Runnable {
 		this.workflowinfo=workflowinfo;
 		this.deploy=deploy;
 		this.connections=connections;
-		this.avaClouds =workflowinfo.getAvaClouds();
-		this.worklfowStatues="running";
+		this.avaClouds =(LinkedList<String>) workflowinfo.getAvaClouds().clone();
 		setDeployOrder();
 		setPartitionGraph();
 		initUNPParition();
+		this.worklfowStatues="running";
 	//	boolean killThread=false;
 	}
 	@Override
@@ -55,6 +55,7 @@ public class workflowDeployment implements Runnable {
 					// this is for calculate the cost of the new clouds. if cheaper, shift to new clouds.
 					costNewClouds c=new costNewClouds(workflowinfo.getAvaClouds(),avaClouds,unproPartition,deploy,workflowinfo);
 					if(c.needChange()){
+						System.out.println("deploy to new clouds");
 						stopWorkers();
 						this.worklfowStatues="cloudChange";		
 						deployInfo deinfo=c.getDeployInfo();
@@ -98,8 +99,13 @@ public class workflowDeployment implements Runnable {
 			ArrayList<Object> partition=partitionGraph.get(node);
 			int cloud=(int) partition.get(0);
 			String cloudName=avaClouds.get(cloud);
+	//		System.out.println("needed cloud "+cloudName);
+	//		System.out.println("old cloud "+avaClouds);
+			
 			LinkedList<String> currentCloud=workflowinfo.getAvaClouds();
-			if(cloudName.equals(currentCloud.get(cloud))){
+	//		System.out.println("current cloud "+currentCloud);
+			if(currentCloud.contains(cloudName)){
+	//			System.out.println("deploy cloud:" +cloudName);
 				if(exceutedNode.contains(node)){
 					
 				}else{
@@ -111,9 +117,14 @@ public class workflowDeployment implements Runnable {
 					addNewPartition(excu,t);
 				}
 			}else{
+				
+				System.out.println("cloud fail");
 				costNewClouds c=new costNewClouds(avaClouds,unproPartition,deploy,workflowinfo);
 				stopWorkers();
-				this.worklfowStatues="cloudChange";
+				this.worklfowStatues="cloudfail";
+				deployInfo deinfo=c.getDeployInfo();
+				new handleCloudChange(deinfo,workflowinfo);
+				break;
 			}
 	
 		}
@@ -143,7 +154,12 @@ public class workflowDeployment implements Runnable {
 		 this.partitionGraph=deploy.getPartitionGraph();
 	 }
 	void initUNPParition(){
-		this.unproPartition=partitionGraph.keySet();
+		//this.unproPartition=partitionGraph.keySet();
+		Iterator<Integer> keys=partitionGraph.keySet().iterator();
+		while(keys.hasNext()){
+			unproPartition.add(keys.next());
+		}
+	//	System.out.println(partitionGraph);
 	}
 	
 	public synchronized void addNewPartition(runningPartition excu,Thread t){

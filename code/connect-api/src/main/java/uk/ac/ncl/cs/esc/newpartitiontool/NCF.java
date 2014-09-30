@@ -14,8 +14,8 @@ public class NCF {
 	double[][] workflow;
     double [][] ccost;
     double [][] cpucost;
-    double[][] storageTime;
-    double[] storageCost;
+//    double[][] storageTime;
+//    double[] storageCost;
     int [][] deployment;
     int [][] finaldeployment;
     int aveCom=0;
@@ -30,8 +30,8 @@ public class NCF {
     	this.workflow=getInfo.getWorkflow();
         this.ccost=getInfo.getCcost();
         this.cpucost=getInfo.getCpucost();
-        this.storageCost=getInfo.getStorageCost();
-        this.storageTime=getInfo.getStorageTime();
+ //       this.storageCost=getInfo.getStorageCost();
+//        this.storageTime=getInfo.getStorageTime();
         this.checking=new Security(getInfo);
         deployment=new int[workflow.length][ccost.length];
         finaldeployment=new int[workflow.length][ccost.length];
@@ -232,9 +232,9 @@ public class NCF {
     					int endNode=i;
     					int endCloud=isoccupied(endNode);
     					double comCost=communicationCost(startNode,endNode,startCloud,endCloud);
-    					double storageCost=storageCost(startNode,endNode,startCloud,endCloud);
+   // 					double storageCost=storageCost(startNode,endNode,startCloud,endCloud);
     			//		System.out.println(comCost);
-    					cost+=comCost+storageCost;
+    //					cost+=comCost+storageCost;
     					if(!offSpring.contains(i)){
     						offSpring.add(i);
     					}
@@ -390,7 +390,7 @@ public class NCF {
     		if(parentCloud==-1){
     			return 0;
     		}
-    		cost+=storageCost(parentNode,node,parentCloud,nodeCloud);
+  //  		cost+=storageCost(parentNode,node,parentCloud,nodeCloud);
     	}
     	
     	return cost;
@@ -530,7 +530,7 @@ public class NCF {
                       return -1;
                   }else{
                       sum+=communicationCost(singleNode,node,parentCloud,cloud);
-                      sum+=storageCost(singleNode,node,parentCloud,cloud);
+    //                  sum+=storageCost(singleNode,node,parentCloud,cloud);
                   }
               }
           }
@@ -550,7 +550,7 @@ public class NCF {
                 return -1;
             }else{
                 sum+=communicationCost(singleNode,node,parentCloud,cloud);
-                sum+=storageCost(singleNode,node,parentCloud,cloud);
+         //       sum+=storageCost(singleNode,node,parentCloud,cloud);
             }
         }
         return sum;
@@ -558,13 +558,13 @@ public class NCF {
     
     // return the storage cost: source cloud storagecost* datasize* storagetime
     
-    private double storageCost(int startNode,int endNode,int startCloud,int endCloud){
-    	if(startCloud==endCloud){
-    		return 0;
-    	}else{
-    		return workflow[startNode][endNode]*storageTime[startNode][endNode]*storageCost[startCloud];
-    	}
-    }
+//    private double storageCost(int startNode,int endNode,int startCloud,int endCloud){
+//    	if(startCloud==endCloud){
+//    		return 0;
+//    	}else{
+//    		return workflow[startNode][endNode]*storageTime[startNode][endNode]*storageCost[startCloud];
+//    	}
+//    }
     
     // return the communication cost between two deployed nodes
     private double communicationCost(int startNode,int endNode,int startCloud,int endCloud){
