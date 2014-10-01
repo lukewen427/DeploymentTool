@@ -27,7 +27,7 @@ public class workflowDeployment implements Runnable {
 	Set<Integer> unproPartition=new HashSet<Integer>();
 	boolean killThread=false;
 	workflowInfo workflowinfo;
-	String worklfowStatues;
+	String workflowStatues;
 	public workflowDeployment (deploymentIm deploy,	ArrayList<ArrayList<String>> connections,workflowInfo workflowinfo){
 		this.workflowinfo=workflowinfo;
 		this.deploy=deploy;
@@ -36,7 +36,7 @@ public class workflowDeployment implements Runnable {
 		setDeployOrder();
 		setPartitionGraph();
 		initUNPParition();
-		this.worklfowStatues="running";
+		this.workflowStatues="running";
 	//	boolean killThread=false;
 	}
 	@Override
@@ -57,7 +57,7 @@ public class workflowDeployment implements Runnable {
 					if(c.needChange()){
 						System.out.println("deploy to new clouds");
 						stopWorkers();
-						this.worklfowStatues="cloudChange";		
+						this.workflowStatues="cloudChange";		
 						deployInfo deinfo=c.getDeployInfo();
 						new handleCloudChange(deinfo,workflowinfo);
 					}
@@ -86,13 +86,17 @@ public class workflowDeployment implements Runnable {
 					
 					if(excu.checkStautes().equals("fail")){
 						stopWorkers();
-						this.worklfowStatues="fail";
+						this.workflowStatues="fail";
 					}
 				}
 			}
 		}
 		
-		this.worklfowStatues="finish";
+		this.workflowStatues="finish";
+		
+		if(workflowStatues.equals("finish")){
+			System.out.println("worklfow execution completely");
+		}
 	}
 	private void Deployment(ArrayList<Integer> step) {
 		for(int node:step){
@@ -121,7 +125,7 @@ public class workflowDeployment implements Runnable {
 				System.out.println("cloud fail");
 				costNewClouds c=new costNewClouds(avaClouds,unproPartition,deploy,workflowinfo);
 				stopWorkers();
-				this.worklfowStatues="cloudfail";
+				this.workflowStatues="cloudfail";
 				deployInfo deinfo=c.getDeployInfo();
 				new handleCloudChange(deinfo,workflowinfo);
 				break;
@@ -181,7 +185,7 @@ public class workflowDeployment implements Runnable {
 	}
 	
 	public String getWorkflowStatue(){
-		return worklfowStatues; 
+		return workflowStatues; 
 	}
 	private void stopWorkers(){
 		if(!runningPartitions.isEmpty()){

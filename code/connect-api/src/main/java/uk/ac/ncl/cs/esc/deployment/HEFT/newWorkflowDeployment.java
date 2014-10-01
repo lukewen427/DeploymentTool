@@ -25,11 +25,11 @@ public class newWorkflowDeployment implements Runnable {
 	ArrayList<Integer> exceutedNode=new ArrayList<Integer>();
 	ArrayList<ArrayList<String>> connections;
 	LinkedList<String> avaClouds;
-	ArrayList<ArrayList<String>>dpconnections;
+	//ArrayList<ArrayList<String>>dpconnections;
 	Set<Integer> unproPartition=new HashSet<Integer>();
 	boolean killThread=false;
 	workflowInfo workflowinfo;
-	String worklfowStatues;
+	String workflowStatues;
 	ArrayList<Object> inputLinks;
 	public newWorkflowDeployment(newDeploymentIm deploy,unpworkflowInfo upw){
 		this.workflowinfo=upw.reCreateWorkflowinfo();
@@ -40,8 +40,8 @@ public class newWorkflowDeployment implements Runnable {
 		setDeployOrder();
 		setPartitionGraph();
 		initUNPParition();
-		addConnections();
-		this.worklfowStatues="running";
+	//	addConnections();
+		this.workflowStatues="running";
 		
 	}
 	@Override
@@ -62,7 +62,7 @@ public class newWorkflowDeployment implements Runnable {
 					costNewClouds c=new costNewClouds(workflowinfo.getAvaClouds(),avaClouds,unproPartition,dep,workflowinfo);
 					if(c.needChange()){
 						stopWorkers();
-						this.worklfowStatues="cloudChange";		
+						this.workflowStatues="cloudChange";		
 						deployInfo deinfo=c.getDeployInfo();
 						new handleCloudChange(deinfo,workflowinfo);
 					}
@@ -91,12 +91,16 @@ public class newWorkflowDeployment implements Runnable {
 					
 					if(excu.checkStautes().equals("fail")){
 						stopWorkers();
-						this.worklfowStatues="fail";
+						this.workflowStatues="fail";
 					}
 				}
 			}
 		}
-		this.worklfowStatues="finish";
+		this.workflowStatues="finish";
+		
+		if(workflowStatues.equals("finish")){
+			System.out.println("worklfow execution completely");
+		}
 	}
 	
 	private void Deployment(ArrayList<Integer> step) {
@@ -110,7 +114,7 @@ public class newWorkflowDeployment implements Runnable {
 					
 				}else{
 					HashMap<String,String> newPartition=converse(partition);
-					runningPartition excu=new runningPartition(cloudName,newPartition, dpconnections, node);
+					runningPartition excu=new runningPartition(cloudName,newPartition, connections, node);
 					Thread t= new Thread(excu);
 					t.setName(String.valueOf(node));
 					t.start();
@@ -120,7 +124,7 @@ public class newWorkflowDeployment implements Runnable {
 				deploymentIm dep=deploy.getDeploymentIm();
 				costNewClouds c=new costNewClouds(avaClouds,unproPartition,dep,workflowinfo);
 				stopWorkers();
-				this.worklfowStatues="cloudChange";
+				this.workflowStatues="cloudChange";
 			}
 	
 		}
@@ -162,7 +166,7 @@ public class newWorkflowDeployment implements Runnable {
 	}
 	
 	public String getWorkflowStatue(){
-		return worklfowStatues; 
+		return workflowStatues; 
 	}
 	private void stopWorkers(){
 		if(!runningPartitions.isEmpty()){
@@ -176,13 +180,13 @@ public class newWorkflowDeployment implements Runnable {
 		stopThread();
 	}
 	
-	void addConnections(){
+/*	void addConnections(){
 		dpconnections=(ArrayList<ArrayList<String>>) connections.clone();
 		for(int a=0;a<inputLinks.size();a++){
 			ArrayList<String> link=(ArrayList<String>) ((ArrayList<Object>)inputLinks.get(a)).get(1);
 			dpconnections.add(link);
 		}
-	}
+	}*/
 	
 	void setDeployOrder(){
 		 this.deployOrder=deploy.getOrder();

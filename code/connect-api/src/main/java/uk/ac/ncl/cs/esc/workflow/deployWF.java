@@ -27,4 +27,7 @@ public void executeWF(DefaultDrawingModel drawing,String partitionName,StorageCl
 public DocumentRecord loadWorkflow(String name, String wfFolderId, XmlDataStore wfdata) throws Exception;
 
 public void execute(String partitionName,StorageClient Sclient,XmlDataStore wfdata) throws Exception;
+
+public void killExe(String invocationId);
+
 }

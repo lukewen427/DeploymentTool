@@ -32,6 +32,7 @@ public class eSCPartition {
 	public HashMap<String,ByteArrayOutputStream> createSCWorkflow(String cloudName,String partitionName,HashMap<String, String> partition,
 			ArrayList<String> heads,HashMap<String, ByteArrayOutputStream> theresults,ArrayList<ArrayList<String>> connections) throws Exception{
 		this.connections=connections;
+	//	System.out.println(connections);
 		cloudConnection coCloud=new cloudConnection();
 		connection con=coCloud.creatCon(cloudName);
 		API api=con.getAPI();
@@ -70,6 +71,7 @@ public class eSCPartition {
 					String d=link.get(1);
 					if(d.equals(blockId)){
 						String findId=s+","+blockId;
+				//		System.out.println(findId);
 						String documentId=resultInfo.get(findId);
 						String input=link.get(5);
 						String theserviceId=importservice;

@@ -121,8 +121,8 @@ public static void main(String args[]) throws Exception{
 		String cloud2="cloud2";
 		String cloud3="cloud3";
 		String cloud1ip="10.66.66.176";
-		String cloud2ip="10.66.66.176";
-		String cloud3ip="10.66.66.176";
+		String cloud2ip="10.66.66.252";
+		String cloud3ip="10.66.66.252";
 		
 		Cloud c1=new Cloud(cloud1,"0",cloud1ip,2,2,5);
 		Cloud c2=new Cloud(cloud2,"1",cloud2ip,5,5,10);

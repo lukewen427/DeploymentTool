@@ -14,6 +14,7 @@ import com.connexience.api.model.EscDocumentVersion;
 import com.connexience.api.model.EscFolder;
 import com.connexience.api.model.EscWorkflowInvocation;
 import com.connexience.api.model.EscWorkflowParameterList;
+import com.connexience.server.ConnexienceException;
 import com.connexience.server.model.ServerObject;
 import com.connexience.server.model.document.DocumentRecord;
 import com.connexience.server.model.document.DocumentVersion;
@@ -172,6 +173,15 @@ public class deployWFIm implements deployWF {
 		  WorkflowDocument newDoc =loadWorkflow(partitionName,wfFolderId,wfdata);
 		  WorkflowParameterList parameters =new WorkflowParameterList();
 		 api.executeWorkflow((WorkflowDocument) newDoc, parameters, (long)-1, null);
+	}
+	
+	public void killExe(String invocationId){
+		try {
+			api.workflowTerminatedByEngine(invocationId);
+		} catch (ConnexienceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void executeWF(DefaultDrawingModel drawing,String partitionName,StorageClient Sclient,HashMap<String, ByteArrayOutputStream> result) throws Exception{
