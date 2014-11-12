@@ -1,5 +1,6 @@
 package uk.ac.ncl.cs.esc.cloudMonitor;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -41,6 +42,18 @@ public class CloudPool {
 				}
 			}
 			return thecloud;
+		}
+		
+		public static Set<String> getAvaClouds(){
+			Set<String> cloudSet=new HashSet<String>();
+			cloudCheck check=new cloudCheck();
+			try {
+				cloudSet=(Set<String>) check.getCloud();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return cloudSet;
 		}
 	}
 	

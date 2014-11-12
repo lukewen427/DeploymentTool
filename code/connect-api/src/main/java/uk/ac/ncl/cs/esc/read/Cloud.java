@@ -11,8 +11,10 @@ public class Cloud {
 	private double TransferIn;
 	private double TransferOut;
 	private double CPUCost;
+	private double startTime;
+	private double storageCost;
 	public Cloud(String name,String securityLevel,String cloudip,
-			int TransferIn,int TranferOut,int CPUCost){
+			double TransferIn, double TranferOut,double CPUCost,double startTime,double storageCost){
 		this.name=name;
 		this.securityLevel=securityLevel;
 		this.cloudip=cloudip;
@@ -20,6 +22,8 @@ public class Cloud {
 		this.TransferIn=TransferIn;
 		this.TransferOut= TranferOut;
 		this.CPUCost=CPUCost;
+		this.startTime=startTime;
+		this.storageCost=storageCost;
 	}
 	public String getCloudname(){
 		
@@ -49,6 +53,13 @@ public class Cloud {
 		return CPUCost;
 	}
 	
+	public double getStartTime(){
+		return startTime;
+	}
+	
+	public double getStorageCost(){
+		return storageCost;
+	}
 	// get the number in string
 	public int getNumber(){
 		int number = 0;

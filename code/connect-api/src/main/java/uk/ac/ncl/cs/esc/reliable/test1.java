@@ -1,4 +1,4 @@
-package uk.ac.ncl.cs.esc.newpartitiontool;
+package uk.ac.ncl.cs.esc.reliable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,7 +29,7 @@ public static void main(String args[]) throws Exception{
 	security2.add("0");
 	security2.add("1");
 	security2.add("Service");
-	security2.add("500");
+	security2.add("50");
 	ArrayList security3= new ArrayList();
 	security3.add("0");
 	security3.add("1");
@@ -138,7 +138,7 @@ public static void main(String args[]) throws Exception{
 		cm.initAvaClouds(cloudSet);
 	  //   new readInfo(blockInfo,workflowId,connections);
 	//	cloudMonitorIm cm = new cloudMonitorIm();
-	       new prepareDeployment(workflowId, connections, blockInfo,cm);
+	       new prepareWorkflow(workflowId, connections, blockInfo,cm);
 		
 	}
 }

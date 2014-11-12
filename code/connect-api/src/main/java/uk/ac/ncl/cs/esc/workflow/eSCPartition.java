@@ -28,6 +28,7 @@ public class eSCPartition {
 	String importPORT="imported-data";
 	// the input port of CSVExport
 	String exportPORT="input-data";
+	deployWF wf;
 	
 	public HashMap<String,ByteArrayOutputStream> createSCWorkflow(String cloudName,String partitionName,HashMap<String, String> partition,
 			ArrayList<String> heads,HashMap<String, ByteArrayOutputStream> theresults,ArrayList<ArrayList<String>> connections) throws Exception{
@@ -36,7 +37,7 @@ public class eSCPartition {
 		cloudConnection coCloud=new cloudConnection();
 		connection con=coCloud.creatCon(cloudName);
 		API api=con.getAPI();
-		deployWF wf=new deployWFIm(api);
+		this.wf=new deployWFIm(api);
 		 StorageClient Sclient =con.getStorageAPI();
 	//	 WorkflowClient wfClient=con.getWorkflowAPI();
 		 HashMap<String,String> resultInfo=null;
@@ -95,6 +96,11 @@ public class eSCPartition {
 		
 	}
 	
+	
+	public void killExecution(){
+		String invId=wf.getInvocationId();
+		wf.killExe(invId);
+	}
 	private void offspringNodes(DataProcessorBlock serviceBlock,
 			String startNode, HashMap<String, String> partition, DefaultDrawingModel drawing,
 			int b, deployWF wf, API api, ArrayList<String> visited,HashMap<String,String> resultInfo) throws Exception {

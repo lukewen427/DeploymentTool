@@ -27,14 +27,13 @@ public class readWorkflow {
 	    int [][] deployment;
 	    Set<Cloud> cloudSet=new HashSet<Cloud>();
 	    LinkedList<String> avaClouds;
-	String workflowId;
+//	String workflowId;
 	ArrayList<ArrayList<String>> connections;
 	HashMap<String,ArrayList<String>> blockInfo;
 	HashBiMap< String,Integer> biMap= HashBiMap.create();
 	cloudMonitorIm cm;
-	public readWorkflow(String workflowId, ArrayList<ArrayList<String>> connections,HashMap<String,ArrayList<String>> blockInfo,cloudMonitorIm cm){
+	public readWorkflow(ArrayList<ArrayList<String>> connections,HashMap<String,ArrayList<String>> blockInfo,cloudMonitorIm cm){
 		this.cm=cm;
-		this.workflowId=workflowId;
 		this.connections=connections;
 		this.blockInfo=blockInfo;
 		this.cloudSet=getClouds();

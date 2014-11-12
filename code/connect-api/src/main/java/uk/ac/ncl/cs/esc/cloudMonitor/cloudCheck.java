@@ -5,13 +5,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 
 public class cloudCheck {
 
 	String url="/Users/zhenyuwen/git/ExceptionHandler/website/statues.txt";
 	
 	
-	List<String> cloudSet; 
+	Set<String> cloudSet; 
 	public cloudCheck(){
 		try {
 		this.cloudSet=getCloud();
@@ -45,7 +46,7 @@ public class cloudCheck {
 		return machines;
 	}*/
 	
-private List<String> getCloud() throws IOException{
+public Set<String> getCloud() throws IOException{
 	getClouds clouds=new getClouds();
 	
 	return clouds.getHttp(url);

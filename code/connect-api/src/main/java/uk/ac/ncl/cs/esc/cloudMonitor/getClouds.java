@@ -7,15 +7,17 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 
 
 public class getClouds{
 	
-	public List<String>  getHttp (String url) throws IOException{
-		List<String> clouds=new ArrayList<String>();
+	public Set<String>  getHttp (String url) throws IOException{
+		Set<String> clouds=new HashSet<String>();
 	//	HashMap<String,String> machines=new HashMap<String,String>();
 		try{
 			BufferedReader br= new BufferedReader(new InputStreamReader(
@@ -32,7 +34,9 @@ public class getClouds{
 		}catch(FileNotFoundException e){
 			e.printStackTrace();
 		}
+		
 	//	System.out.println(clouds);
+		
 		return clouds;
 	}
 	

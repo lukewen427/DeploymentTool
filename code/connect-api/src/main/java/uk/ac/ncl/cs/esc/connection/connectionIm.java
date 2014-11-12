@@ -32,8 +32,9 @@ public class connectionIm implements connection {
         apiProvider.setServerContext("/workflow");
         API api = apiProvider.createApi();
         api.authenticate(username, password);
-     //   Ticket t = api.getTicket();
-   //     System.out.println("Authenticated: " + t.getUserId());
+       
+    //    Ticket t = api.getTicket();
+     //   System.out.println("Authenticated: " + t.getUserId());
         
         return api;
 	}

@@ -140,6 +140,7 @@ public class RESTClient implements API {
     }
 
     private ClientRequest createRequest(String url) throws IOException, ConnexienceException {
+    	
         ClientRequest request = new ClientRequest("http://" + hostName + ":" + httpPort + serverContext + "/rest/wf" + url);
         request.accept(MediaType.APPLICATION_JSON);
 

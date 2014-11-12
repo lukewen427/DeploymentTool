@@ -69,6 +69,7 @@ public class runningPartition implements Runnable {
 	}
 	
  public void stop(){
+	 dep.killExecution();
 	 kill=true;
  }
 	

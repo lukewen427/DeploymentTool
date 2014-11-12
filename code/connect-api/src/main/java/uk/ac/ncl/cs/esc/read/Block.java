@@ -6,16 +6,16 @@ public class Block {
 	int clearance;
 	String type;
 	String serviceId;
-	int cpu;
+	double cpu;
 	String name;
 	public Block(String blockId,int location,int clearance,String type,
-										String serviceId,int cpu,String name){
+										String serviceId,String name){
 		this.blockId=blockId;
 		this.location=location;
 		this.clearance=clearance;
 		this.type=type;
 		this.serviceId=serviceId;
-		this.cpu=cpu;
+//		this.cpu=cpu;
 		this.name=name;
 	}
 	public String getBlockId(){
@@ -36,8 +36,8 @@ public class Block {
 	public String getBlockName(){
 		return name;
 	}
-	public int cpu(){
+	/*public double cpu(){
 		
 		return cpu;
-	}
+	}*/
 }

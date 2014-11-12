@@ -14,39 +14,53 @@ public class avaClouds implements Runnable{
 LinkedList<String> avClouds;
 Set<String> allClouds;	
 boolean isChange;
-ArrayList<String> change =new ArrayList<String>();
+
 public avaClouds(LinkedList<String>  avClouds){
 	this.avClouds =avClouds;
 	this.allClouds=Clouds.getallClouds();
 }
 
 @Override
-public void run() {
-	// TODO Auto-generated method stub
-	
-	while(true){
-		isChange=false;
-		Iterator<String> clouds=allClouds.iterator();
-		cloudMonitorIm cm=new cloudMonitorIm();
-		while(clouds.hasNext()){
-			String cloudName=clouds.next();
-			if(cm.isCloudAVA(cloudName)){
-				change.add(cloudName);
-			}
-		}
-		try {
-			Thread.sleep(100);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	//	System.out.println(change);	
-		isChange=compare();
-		change.clear();
-	}
-}
+	public void run() {
+		// TODO Auto-generated method stub
 
-boolean compare(){
+		while (true) {
+			isChange = false;
+			this.allClouds = Clouds.getAvaClouds();
+			Iterator<String> clouds = allClouds.iterator();
+		//	System.out.println(allClouds);
+			cloudMonitorIm cm = new cloudMonitorIm();
+			ArrayList<String> change = new ArrayList<String>();
+			while (clouds.hasNext()) {
+
+				String cloudName = clouds.next();
+				if (cm.isCloudAVA(cloudName)) {
+					change.add(cloudName);
+				}
+			}
+
+			if (change.isEmpty() && !allClouds.isEmpty()) {
+
+			} else {
+				if (allClouds.isEmpty()) {
+					break;
+				} else {
+				//	 System.out.println(change);
+
+					isChange = compare(change);
+				}
+			}
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			allClouds.clear();
+		}
+	}
+
+boolean compare(ArrayList<String> change){
 	
 	LinkedList<String> temp=deepClone(avClouds);
 	boolean isChange=false;

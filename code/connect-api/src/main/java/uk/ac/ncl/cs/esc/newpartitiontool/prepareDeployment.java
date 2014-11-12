@@ -57,7 +57,7 @@ public class prepareDeployment {
 	    	setWorkflowId(workflowId);
 	    	setConnections(connections);
 	    	setBlockInfo(blockInfo);
-	    	readWorkflow read=new readWorkflow(workflowId, connections,blockInfo,cm);
+	    	readWorkflow read=new readWorkflow(connections,blockInfo,cm);
 	    	setDeployment(read.getDeployment());
 	     	setAvaClouds(cm.getAvaClouds());
 	    	setMaps(read.getMap());
@@ -212,7 +212,7 @@ public class prepareDeployment {
 		//		int clearance=(Integer) element.get(1);
 				String type=(String) element.get(2);
 				int cpu=Integer.valueOf((String) element.get(3));
-				theblock=new Block(blockid,location,clearance,type,serviceId,cpu,blockName);
+				theblock=new Block(blockid,location,clearance,type,serviceId,blockName);
 				theBlockSet.add(theblock);	
 			}
 			

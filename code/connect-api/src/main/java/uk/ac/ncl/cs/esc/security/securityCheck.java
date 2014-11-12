@@ -96,7 +96,7 @@ public class securityCheck {
         if(cloud==parentcloud){
             return true;
         }else{
-            System.out.println(node);
+      
             int dataSecurity= dsecurity[parentNode][node];
             int soncloudSecurity=cloudsecurity[cloud];
             int parentCloudSecurity=cloudsecurity[parentcloud];

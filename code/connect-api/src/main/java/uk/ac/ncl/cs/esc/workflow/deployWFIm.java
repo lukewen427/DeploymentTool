@@ -40,6 +40,7 @@ import org.pipeline.core.xmlstorage.io.XmlDataStoreStreamWriter;
 import uk.ac.ncl.cs.esc.connection.connection;
 public class deployWFIm implements deployWF {
 	API api;
+	String invocationId=null;
 	public deployWFIm(API api){
 		this.api=api;
 	}
@@ -177,11 +178,21 @@ public class deployWFIm implements deployWF {
 	
 	public void killExe(String invocationId){
 		try {
-			api.workflowTerminatedByEngine(invocationId);
+			 WorkflowInvocationFolder inv=api.getWorkflowInvocation(invocationId); 
+			if(inv.statusToString(inv.getInvocationStatus()).equals("Waiting") || 
+				 	inv.statusToString(inv.getInvocationStatus()).equals("Running") 
+				 || inv.statusToString(inv.getInvocationStatus()).equals("Waiting for a debugger") ){
+				api.workflowTerminatedByEngine(invocationId);
+			}
+			
 		} catch (ConnexienceException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	public String getInvocationId(){
+		return invocationId;
 	}
 	
 	public void executeWF(DefaultDrawingModel drawing,String partitionName,StorageClient Sclient,HashMap<String, ByteArrayOutputStream> result) throws Exception{
@@ -200,7 +211,7 @@ public class deployWFIm implements deployWF {
 		 WorkflowParameterList parameters =new WorkflowParameterList();
 		 
 		 WorkflowInvocationFolder inv=api.executeWorkflow((WorkflowDocument) newDoc, parameters, (long)-1, null);
-		 
+		 this.invocationId=inv.getInvocationId();
 		 while (inv.statusToString(inv.getInvocationStatus()).equals("Waiting") || 
 				 	inv.statusToString(inv.getInvocationStatus()).equals("Running") 
 				 || inv.statusToString(inv.getInvocationStatus()).equals("Waiting for a debugger") ){
@@ -237,6 +248,25 @@ public class deployWFIm implements deployWF {
 			 outStream.flush();
 			 result.put(thename[0], outStream);
 		 }*/
+	}
+	@Override
+	public void workflowInvo(String workflowId) throws Exception {
+		// TODO Auto-generated method stub
+		 try {
+			WorkflowDocument workflow=api.getWorkflow(workflowId);
+			WorkflowParameterList parameters =new WorkflowParameterList();
+			 WorkflowInvocationFolder inv=api.executeWorkflow(workflow, parameters, (long)-1, null);
+			 this.invocationId=inv.getInvocationId();
+			 while (inv.statusToString(inv.getInvocationStatus()).equals("Waiting") || 
+					 	inv.statusToString(inv.getInvocationStatus()).equals("Running") 
+					 || inv.statusToString(inv.getInvocationStatus()).equals("Waiting for a debugger") ){
+				 Thread.sleep(5000);
+				 inv=api.getWorkflowInvocation(inv.getInvocationId()); 
+			 }
+		} catch (ConnexienceException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 }

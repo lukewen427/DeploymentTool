@@ -30,4 +30,8 @@ public void execute(String partitionName,StorageClient Sclient,XmlDataStore wfda
 
 public void killExe(String invocationId);
 
+public String getInvocationId();
+
+public void workflowInvo(String workflowId) throws Exception;
+
 }
